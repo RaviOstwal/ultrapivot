@@ -16,6 +16,7 @@
 
     callWithJQuery(function($) {
         var SubtotalPivotData, SubtotalRenderer, aggregatorTemplates, subtotalAggregatorTemplates, usFmtPct;
+
         SubtotalPivotData = (function(superClass) {
             var processKey;
 
@@ -93,10 +94,10 @@
 
         })($.pivotUtilities.PivotData);
         $.pivotUtilities.SubtotalPivotData = SubtotalPivotData;
+
         SubtotalRenderer = function(pivotData, opts) {
-            var addClass, adjustAxisHeader, allTotal, arrowCollapsed, arrowExpanded, buildAxisHeader, buildColAxisHeaders, buildColHeader, buildColTotals, buildColTotalsHeader, buildGrandTotal, buildRowAxisHeaders, buildRowHeader, buildRowTotalsHeader, buildValues, classColCollapsed, classColExpanded, classColHide, classColShow, classCollapsed, classExpanded, classRowCollapsed, classRowExpanded, classRowHide, classRowShow, clickStatusCollapsed, clickStatusExpanded, colAttrs, colKeys, colTotals, collapseAxis, collapseAxisHeaders, collapseChildCol, collapseChildRow, collapseCol, collapseHiddenColSubtotal, collapseRow, collapseShowColSubtotal, collapseShowRowSubtotal, createElement, defaults, expandAxis, expandChildCol, expandChildRow, expandCol, expandHideColSubtotal, expandHideRowSubtotal, expandRow, expandShowColSubtotal, expandShowRowSubtotal, getHeaderText, getTableEventHandlers, hasClass, hideChildCol, hideChildRow, main, processKeys, removeClass, replaceClass, rowAttrs, rowKeys, rowTotals, showChildCol, showChildRow, tree;
             var result, axisTable, colHeaderTable, rowHeaderTable, dataTable;
-            defaults = {
+            var defaults = {
                 table: {
                     clickCallback: null
                 },
@@ -160,34 +161,34 @@
             if (typeof opts.colSubtotalDisplay.collapseAt !== 'undefined' && opts.collapseColsAt !== null) {
                 opts.colSubtotalDisplay.collapseAt = opts.collapseColsAt;
             }
-            colAttrs = pivotData.colAttrs;
-            rowAttrs = pivotData.rowAttrs;
-            rowKeys = pivotData.getRowKeys();
-            colKeys = pivotData.getColKeys();
-            tree = pivotData.tree;
-            rowTotals = pivotData.rowTotals;
-            colTotals = pivotData.colTotals;
-            allTotal = pivotData.allTotal;
-            classRowHide = "rowhide";
-            classRowShow = "rowshow";
-            classColHide = "colhide";
-            classColShow = "colshow";
-            clickStatusExpanded = "expanded";
-            clickStatusCollapsed = "collapsed";
-            classExpanded = "expanded";
-            classCollapsed = "collapsed";
-            classRowExpanded = "rowexpanded";
-            classRowCollapsed = "rowcollapsed";
-            classColExpanded = "colexpanded";
-            classColCollapsed = "colcollapsed";
-            arrowExpanded = opts.arrowExpanded;
-            arrowCollapsed = opts.arrowCollapsed;
-            hasClass = function(element, className) {
+            var colAttrs = pivotData.colAttrs;
+            var rowAttrs = pivotData.rowAttrs;
+            var rowKeys = pivotData.getRowKeys();
+            var colKeys = pivotData.getColKeys();
+            var tree = pivotData.tree;
+            var rowTotals = pivotData.rowTotals;
+            var colTotals = pivotData.colTotals;
+            var allTotal = pivotData.allTotal;
+            var classRowHide = "rowhide";
+            var classRowShow = "rowshow";
+            var classColHide = "colhide";
+            var classColShow = "colshow";
+            var clickStatusExpanded = "expanded";
+            var clickStatusCollapsed = "collapsed";
+            var classExpanded = "expanded";
+            var classCollapsed = "collapsed";
+            var classRowExpanded = "rowexpanded";
+            var classRowCollapsed = "rowcollapsed";
+            var classColExpanded = "colexpanded";
+            var classColCollapsed = "colcollapsed";
+            var arrowExpanded = opts.arrowExpanded;
+            var arrowCollapsed = opts.arrowCollapsed;
+            var hasClass = function(element, className) {
                 var regExp;
                 regExp = new RegExp("(?:^|\\s)" + className + "(?!\\S)", "g");
                 return element.className.match(regExp) !== null;
             };
-            removeClass = function(element, className) {
+            var removeClass = function(element, className) {
                 var k, len, name, ref, regExp, results;
                 ref = className.split(" ");
                 results = [];
@@ -198,7 +199,7 @@
                 }
                 return results;
             };
-            addClass = function(element, className) {
+            var addClass = function(element, className) {
                 var k, len, name, ref, results;
                 ref = className.split(" ");
                 results = [];
@@ -212,11 +213,11 @@
                 }
                 return results;
             };
-            replaceClass = function(element, replaceClassName, byClassName) {
+            var replaceClass = function(element, replaceClassName, byClassName) {
                 removeClass(element, replaceClassName);
                 return addClass(element, byClassName);
             };
-            createElement = function(elementType, className, textContent, attributes, eventHandlers) {
+            var createElement = function(elementType, className, textContent, attributes, eventHandlers) {
                 var attr, e, event, handler, val;
                 e = document.createElement(elementType);
                 if (className != null) {
@@ -241,7 +242,7 @@
                 }
                 return e;
             };
-            processKeys = function(keysArr, className, opts) {
+            var processKeys = function(keysArr, className, opts) {
                 var headers, lastIdx, row;
                 lastIdx = keysArr[0].length - 1;
                 headers = {
@@ -298,7 +299,7 @@
                 })(this), headers);
                 return headers;
             };
-            buildAxisHeader = function(axisHeaders, col, attrs, opts) {
+            var buildAxisHeader = function(axisHeaders, col, attrs, opts) {
                 var ah, arrow, hClass;
                 ah = {
                     text: attrs[col],
@@ -329,7 +330,7 @@
                 axisHeaders.ah.push(ah);
                 return ah;
             };
-            buildColAxisHeaders = function(rowAttrs, colAttrs, opts) {
+            var buildColAxisHeaders = function(rowAttrs, colAttrs, opts) {
                 var ah, attr, axisHeaders, col, k, len;
                 axisHeaders = {
                     collapseAttrHeader: collapseCol,
@@ -353,7 +354,7 @@
                 }
                 return axisHeaders;
             };
-            buildRowAxisHeaders = function(rowAttrs, colAttrs, opts) {
+            var buildRowAxisHeaders = function(rowAttrs, colAttrs, opts) {
                 var ah, axisHeaders, col, k, ref, th;
                 axisHeaders = {
                     collapseAttrHeader: collapseRow,
@@ -372,7 +373,7 @@
                 axisTable.appendChild(axisHeaders.tr);
                 return axisHeaders;
             };
-            getHeaderText = function(h, attrs, opts) {
+            var getHeaderText = function(h, attrs, opts) {
                 var arrow;
                 arrow = " " + arrowExpanded + " ";
                 if (h.col === attrs.length - 1 || h.col >= opts.disableFrom || opts.disableExpandCollapse || h.children.length === 0) {
@@ -380,7 +381,7 @@
                 }
                 return "" + arrow + h.text;
             };
-            buildColHeader = function(axisHeaders, attrHeaders, h, rowAttrs, colAttrs, node, opts) {
+            var buildColHeader = function(axisHeaders, attrHeaders, h, rowAttrs, colAttrs, node, opts) {
                 var ah, chKey, k, len, ref, ref1;
                 ref = h.children;
                 for (k = 0, len = ref.length; k < len; k++) {
@@ -429,14 +430,14 @@
                 attrHeaders.push(h);
                 return node.counter++;
             };
-            buildRowTotalsHeader = function(tr, rowAttrs, colAttrs) {
+            var buildRowTotalsHeader = function(tr, rowAttrs, colAttrs) {
                 var th;
                 th = createElement("th", "pvtTotalLabel rowTotal", opts.localeStrings.totals, {
                     rowspan: colAttrs.length === 0 ? 1 : colAttrs.length + (rowAttrs.length === 0 ? 0 : 1)
                 });
                 return tr.appendChild(th);
             };
-            buildRowHeader = function(axisHeaders, attrHeaders, h, rowAttrs, colAttrs, node, opts) {
+            var buildRowHeader = function(axisHeaders, attrHeaders, h, rowAttrs, colAttrs, node, opts) {
                 var ah, chKey, firstChild, k, len, ref, ref1;
                 ref = h.children;
                 for (k = 0, len = ref.length; k < len; k++) {
@@ -506,7 +507,7 @@
                 attrHeaders.push(h);
                 return node.counter++;
             };
-            getTableEventHandlers = function(value, rowKey, colKey, rowAttrs, colAttrs, opts) {
+            var getTableEventHandlers = function(value, rowKey, colKey, rowAttrs, colAttrs, opts) {
                 var attr, event, eventHandlers, filters, handler, i, ref, ref1;
                 if (!((ref = opts.table) != null ? ref.eventHandlers : void 0)) {
                     return;
@@ -537,7 +538,7 @@
                 }
                 return eventHandlers;
             };
-            buildValues = function(colAttrHeaders, rowAttrHeaders, rowAttrs, colAttrs, opts) {
+            var buildValues = function(colAttrHeaders, rowAttrHeaders, rowAttrs, colAttrs, opts) {
                 var aggregator, ch, cls, k, l, len, len1, rCls, ref, results, rh, td, totalAggregator, tr, val;
                 results = [];
                 for (k = 0, len = rowAttrHeaders.length; k < len; k++) {
@@ -594,7 +595,7 @@
                 }
                 return results;
             };
-            buildColTotalsHeader = function(rowAttrs, colAttrs) {
+            var buildColTotalsHeader = function(rowAttrs, colAttrs) {
                 var colspan, th, tr;
                 tr = createElement("tr");
                 colspan = rowAttrs.length + (colAttrs.length === 0 ? 0 : 1);
@@ -604,7 +605,7 @@
                 tr.appendChild(th);
                 return tr;
             };
-            buildColTotals = function(tr, attrHeaders, rowAttrs, colAttrs, opts) {
+            var buildColTotals = function(tr, attrHeaders, rowAttrs, colAttrs, opts) {
                 var clsNames, h, k, len, results, td, totalAggregator, val;
                 results = [];
                 for (k = 0, len = attrHeaders.length; k < len; k++) {
@@ -630,7 +631,7 @@
                 }
                 return results;
             };
-            buildGrandTotal = function(tr, rowAttrs, colAttrs, opts) {
+            var buildGrandTotal = function(tr, rowAttrs, colAttrs, opts) {
                 var td, totalAggregator, val;
                 totalAggregator = allTotal;
                 val = totalAggregator.value();
@@ -640,7 +641,7 @@
                 tr.appendChild(td);
                 return tr;
             };
-            collapseAxisHeaders = function(axisHeaders, col, opts) {
+            var collapseAxisHeaders = function(axisHeaders, col, opts) {
                 var ah, collapsible, i, k, ref, ref1, results;
                 collapsible = Math.min(axisHeaders.ah.length - 2, opts.disableFrom - 1);
                 if (col > collapsible) {
@@ -656,7 +657,7 @@
                 }
                 return results;
             };
-            adjustAxisHeader = function(axisHeaders, col, opts) {
+            var adjustAxisHeader = function(axisHeaders, col, opts) {
                 var ah;
                 ah = axisHeaders.ah[col];
                 if (ah.expandedCount === 0) {
@@ -668,11 +669,11 @@
                     return ah.onClick = collapseAxis;
                 }
             };
-            hideChildCol = function(ch) {
+            var hideChildCol = function(ch) {
                 $(dataTable).find("tr td[data-colnode=\"" + ch.node + "\"], th[data-colnode=\"" + ch.node + "\"]").removeClass(classColShow).addClass(classColHide);
                 return $(colHeaderTable).find("tr td[data-colnode=\"" + ch.node + "\"], th[data-colnode=\"" + ch.node + "\"]").removeClass(classColShow).addClass(classColHide);
             };
-            collapseHiddenColSubtotal = function(h, opts) {
+            var collapseHiddenColSubtotal = function(h, opts) {
                 $(dataTable).find("tr td[data-colnode=\"" + h.node + "\"], th[data-colnode=\"" + h.node + "\"]").removeClass(classColExpanded).addClass(classColCollapsed);
                 $(colHeaderTable).find("tr td[data-colnode=\"" + h.node + "\"], th[data-colnode=\"" + h.node + "\"]").removeClass(classColExpanded).addClass(classColCollapsed);
                 if (h.children.length !== 0) {
@@ -680,7 +681,7 @@
                 }
                 return h.th.colSpan = 1;
             };
-            collapseShowColSubtotal = function(h, opts) {
+            var collapseShowColSubtotal = function(h, opts) {
                 $(dataTable).find("tr td[data-colnode=\"" + h.node + "\"], th[data-colnode=\"" + h.node + "\"]").removeClass(classColExpanded).addClass(classColCollapsed).removeClass(classColHide).addClass(classColShow);
                 $(colHeaderTable).find("tr td[data-colnode=\"" + h.node + "\"], th[data-colnode=\"" + h.node + "\"]").removeClass(classColExpanded).addClass(classColCollapsed).removeClass(classColHide).addClass(classColShow);
                 if (h.children.length !== 0) {
@@ -688,7 +689,7 @@
                 }
                 return h.th.colSpan = 1;
             };
-            collapseChildCol = function(ch, h) {
+            var collapseChildCol = function(ch, h) {
                 var chKey, k, len, ref;
                 ref = ch.children;
                 for (k = 0, len = ref.length; k < len; k++) {
@@ -699,7 +700,7 @@
                 }
                 return hideChildCol(ch);
             };
-            collapseCol = function(axisHeaders, h, opts) {
+            var collapseCol = function(axisHeaders, h, opts) {
                 var chKey, colSpan, k, len, p, ref;
                 colSpan = h.th.colSpan - 1;
                 ref = h.children;
@@ -726,23 +727,23 @@
                 axisHeaders.ah[h.col].expandedCount--;
                 return adjustAxisHeader(axisHeaders, h.col, opts);
             };
-            showChildCol = function(ch) {
+            var showChildCol = function(ch) {
                 $(dataTable).find("tr td[data-colnode=\"" + ch.node + "\"], th[data-colnode=\"" + ch.node + "\"]").removeClass(classColHide).addClass(classColShow);
                 return $(colHeaderTable).find("tr td[data-colnode=\"" + ch.node + "\"], th[data-colnode=\"" + ch.node + "\"]").removeClass(classColHide).addClass(classColShow);
             };
-            expandHideColSubtotal = function(h) {
+            var expandHideColSubtotal = function(h) {
                 $(dataTable).find("tr td[data-colnode=\"" + h.node + "\"], th[data-colnode=\"" + h.node + "\"]").removeClass(classColCollapsed + " " + classColShow).addClass(classColExpanded + " " + classColHide);
                 $(colHeaderTable).find("tr td[data-colnode=\"" + h.node + "\"], th[data-colnode=\"" + h.node + "\"]").removeClass(classColCollapsed + " " + classColShow).addClass(classColExpanded + " " + classColHide);
                 replaceClass(h.th, classColHide, classColShow);
                 return h.th.textContent = " " + arrowExpanded + " " + h.text;
             };
-            expandShowColSubtotal = function(h) {
+            var expandShowColSubtotal = function(h) {
                 $(dataTable).find("tr td[data-colnode=\"" + h.node + "\"], th[data-colnode=\"" + h.node + "\"]").removeClass(classColCollapsed + " " + classColHide).addClass(classColExpanded + " " + classColShow);
                 $(colHeaderTable).find("tr td[data-colnode=\"" + h.node + "\"], th[data-colnode=\"" + h.node + "\"]").removeClass(classColCollapsed + " " + classColHide).addClass(classColExpanded + " " + classColShow);
                 h.th.colSpan++;
                 return h.th.textContent = " " + arrowExpanded + " " + h.text;
             };
-            expandChildCol = function(ch, opts) {
+            var expandChildCol = function(ch, opts) {
                 var chKey, k, len, ref, results;
                 if (ch.children.length !== 0 && opts.hideOnExpand && ch.clickStatus === clickStatusExpanded) {
                     replaceClass(ch.th, classColHide, classColShow);
@@ -762,7 +763,7 @@
                     return results;
                 }
             };
-            expandCol = function(axisHeaders, h, opts) {
+            var expandCol = function(axisHeaders, h, opts) {
                 var ch, chKey, colSpan, k, len, p, ref;
                 if (h.clickStatus === clickStatusExpanded) {
                     adjustAxisHeader(axisHeaders, h.col, opts);
@@ -795,7 +796,7 @@
                 axisHeaders.ah[h.col].expandedCount++;
                 return adjustAxisHeader(axisHeaders, h.col, opts);
             };
-            hideChildRow = function(ch, opts) {
+            var hideChildRow = function(ch, opts) {
                 var cell, k, l, len, len1, ref, ref1, results;
                 ref = ch.tr.querySelectorAll("th");
                 for (k = 0, len = ref.length; k < len; k++) {
@@ -823,7 +824,7 @@
                     return results;
                 }
             };
-            collapseShowRowSubtotal = function(h, opts) {
+            var collapseShowRowSubtotal = function(h, opts) {
                 var cell, k, l, len, len1, ref, ref1, results;
                 h.th.textContent = " " + arrowCollapsed + " " + h.text;
                 ref = h.tr.querySelectorAll("th");
@@ -856,7 +857,7 @@
                     return results;
                 }
             };
-            collapseChildRow = function(ch, h, opts) {
+            var collapseChildRow = function(ch, h, opts) {
                 var chKey, k, len, ref;
                 ref = ch.children;
                 for (k = 0, len = ref.length; k < len; k++) {
@@ -865,7 +866,7 @@
                 }
                 return hideChildRow(ch, opts);
             };
-            collapseRow = function(axisHeaders, h, opts) {
+            var collapseRow = function(axisHeaders, h, opts) {
                 var chKey, k, len, ref;
                 ref = h.children;
                 for (k = 0, len = ref.length; k < len; k++) {
@@ -878,7 +879,7 @@
                 axisHeaders.ah[h.col].expandedCount--;
                 return adjustAxisHeader(axisHeaders, h.col, opts);
             };
-            showChildRow = function(ch, opts) {
+            var showChildRow = function(ch, opts) {
                 var cell, k, l, len, len1, ref, ref1, results;
                 ref = ch.tr.querySelectorAll("th");
                 for (k = 0, len = ref.length; k < len; k++) {
@@ -906,7 +907,7 @@
                     return results;
                 }
             };
-            expandShowRowSubtotal = function(h, opts) {
+            var expandShowRowSubtotal = function(h, opts) {
                 var cell, k, l, len, len1, ref, ref1, results;
                 h.th.textContent = " " + arrowExpanded + " " + h.text;
                 ref = h.tr.querySelectorAll("th");
@@ -932,7 +933,7 @@
                     return results;
                 }
             };
-            expandHideRowSubtotal = function(h, opts) {
+            var expandHideRowSubtotal = function(h, opts) {
                 var cell, k, l, len, len1, ref, ref1, results;
                 h.th.textContent = " " + arrowExpanded + " " + h.text;
                 ref = h.tr.querySelectorAll("th, td");
@@ -954,7 +955,7 @@
                     return results;
                 }
             };
-            expandChildRow = function(ch, opts) {
+            var expandChildRow = function(ch, opts) {
                 var chKey, k, len, ref, results;
                 if (ch.children.length !== 0 && opts.hideOnExpand && ch.clickStatus === clickStatusExpanded) {
                     replaceClass(ch.th, classRowHide, classRowShow);
@@ -974,7 +975,7 @@
                     return results;
                 }
             };
-            expandRow = function(axisHeaders, h, opts) {
+            var expandRow = function(axisHeaders, h, opts) {
                 var ch, chKey, k, len, ref;
                 if (h.clickStatus === clickStatusExpanded) {
                     adjustAxisHeader(axisHeaders, h.col, opts);
@@ -998,7 +999,7 @@
                 axisHeaders.ah[h.col].expandedCount++;
                 return adjustAxisHeader(axisHeaders, h.col, opts);
             };
-            collapseAxis = function(axisHeaders, col, attrs, opts) {
+            var collapseAxis = function(axisHeaders, col, attrs, opts) {
                 var collapsible, h, i, k, ref, ref1, results;
                 collapsible = Math.min(attrs.length - 2, opts.disableFrom - 1);
                 if (col > collapsible) {
@@ -1021,7 +1022,7 @@
                 }
                 return results;
             };
-            expandAxis = function(axisHeaders, col, attrs, opts) {
+            var expandAxis = function(axisHeaders, col, attrs, opts) {
                 var ah, h, i, k, ref, results;
                 ah = axisHeaders.ah[col];
                 results = [];
@@ -1040,7 +1041,7 @@
                 return results;
             };
 
-            function setFont($element, font, force, defaultFont) {
+            var setFont = function($element, font, force, defaultFont) {
                 if (defaultFont.fontStyle !== font.fontStyle) {
                     $element.css('fontStyle', font.fontStyle);
                 }
@@ -1054,7 +1055,6 @@
                     $element.css('fontSize', font.fontSize);
                 }
             }
-
             var setSizes = function(fontOptions) {
                 function setWidth($ele, width) {
                     //width = isNaN(width) ? width : (width + 'px');
@@ -1092,6 +1092,7 @@
 
                 var totalWidth = $(result).width();
                 var totalHeight = $(result).height();
+                console.log(totalWidth, totalHeight);
 
                 var dataUnits = getFontUnits(fontOptions.dataFont, defaults.fontOptions.dataFont);
                 var rowUnits = getFontUnits(fontOptions.rowHeaderFont, defaults.fontOptions.rowHeaderFont);
@@ -1134,7 +1135,6 @@
 
                 applyFonts(fontOptions);
             };
-
             var applyFonts = function(fontOptions) {
                 // Font to column header and axis will be same
                 setFont($(axisTable).find('th'), fontOptions.colHeaderFont, false, defaults.fontOptions.colHeaderFont);
@@ -1146,7 +1146,6 @@
                 // data will have its own font
                 setFont($(dataTable).find('td'), fontOptions.dataFont, false, defaults.fontOptions.dataFont);
             };
-
             var initScrolls = function() {
                 var scrollBar = null;
 
@@ -1188,7 +1187,7 @@
                 });
             };
 
-            main = function(rowAttrs, rowKeys, colAttrs, colKeys) {
+            var main = function(rowAttrs, rowKeys, colAttrs, colKeys) {
                 var chKey, colAttrHeaders, colAxisHeaders, colKeyHeaders, k, l, len, len1, node, ref, ref1, rowAttrHeaders, rowAxisHeaders, rowKeyHeaders, tbody, thead, tr;
                 rowAttrHeaders = [];
                 colAttrHeaders = [];
@@ -1268,7 +1267,6 @@
                 result.setAttribute("data-numcols", colKeys.length);
 
                 setTimeout(function () {
-                    setSizes(opts.fontOptions);
                     initScrolls();
                     $(result).find('.pvtTableInnerContainer').css('display', 'flex');
                 }, 0);
@@ -1348,5 +1346,3 @@
     });
 
 }).call(this);
-
-//# sourceMappingURL=subtotal.js.map
