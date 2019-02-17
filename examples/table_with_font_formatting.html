@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ultra Pivot Font Formatting</title>
+</head>
+<body>
+
+<!-- PivotTable.js libs from ../dist -->
+<link rel="stylesheet" type="text/css" href="../src/css/ultrapivot.css">
+
+<script type="text/javascript" src="../libs/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../libs/js/jquery.overlayScrollbars.js"></script>
+<link rel="stylesheet" type="text/css" href="../libs/css/OverlayScrollbars.css">
+<link rel="stylesheet" type="text/css" href="../libs/css/os-theme-thin-dark.css">
+<link rel="stylesheet" type="text/css" href="../libs/css/os-theme-thin-light.css">
+
+<script src="../libs/js/pivot.js"></script>
+<script src="../src/js/ultrapivot.js"></script>
+
+<div id="ultraPivotTable" style="width: 800px; height: 400px;"></div>
+
+<script type="text/javascript" >
+    let utils = $.pivotUtilities;
+    let sum =  utils.aggregators["Sum"];
+    let dataClass = utils.SubtotalPivotData;
+    let renderer = utils.subtotal_renderers["Table With Subtotal"];
+
+    $("#ultraPivotTable").pivot(
+        [
+            ["color", "shape", "Measures", "value"],
+            ["blue", "circle", "SUM(Profit)", 1],
+            ["blue", "circle", "SUM(Freight)", 2],
+            ["blue", "triangle", "SUM(Freight)", 3],
+            ["red", "circle", "SUM(Freight)", 4],
+            ["red", "triangle", "SUM(Profit)", 5],
+            ["red", "triangle", "SUM(Freight)", 6]
+        ],
+        {
+            rows: ["shape", "Measures"],
+            cols: ["color"],
+            aggregator: sum(["value"]),
+            dataClass: dataClass,
+            renderer: renderer,
+            rendererOptions: {
+                fontOptions: {
+                    dataFont: {
+                        fontSize: 10
+                    },
+                    rowHeaderFont: {
+                        fontSize: 12
+                    },
+                    colHeaderFont: {
+                        fontSize: 12
+                    }
+                }
+            }
+        }
+    );
+</script>
+
+</body>
+</html>

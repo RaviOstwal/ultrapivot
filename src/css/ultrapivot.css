@@ -27,8 +27,11 @@ table.pvtTable .pvtGrandTotal {
     background: #000;
 }
 
+table.dataTable tr:nth-child(odd) {background: #CCC !important;}
+table.dataTable tr:nth-child(even) {background: #AAA !important;}
+
 table.pvtTable th, table.pvtTable td {
-    padding: 5px;
+    padding: 5px !important;
 }
 
 table.pvtTable tr {

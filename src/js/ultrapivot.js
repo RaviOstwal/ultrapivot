@@ -1082,8 +1082,8 @@
                     setFont(test, font, true, defaultFont);
                     test.text("◢ Ravi Ostwal Jain");
 
-                    var height = Math.ceil(test.height()) + 1;
-                    var width = Math.ceil(test.width()) + 1;
+                    var height = Math.ceil(test.height());
+                    var width = Math.ceil(test.width());
 
                     test.remove();
 
@@ -1101,28 +1101,31 @@
                     height: Math.max(Math.max(rowUnits.height, dataUnits.height), columnUnits.height),
                     width: Math.max(Math.max(rowUnits.width, dataUnits.width), columnUnits.width)
                 };
-                var height = ((units.height + 10) * (colAttrs.length + 1)) + 1;
-                var width = (units.width + 10) * (rowAttrs.length + 1);
+                var axisHeight = ((units.height + 10 + 1) * (colAttrs.length + 1));
+                var axisWidth = (units.width + 10) * (rowAttrs.length + 1);
 
-                setWidth($(result).find('.c1'), width);
-                setWidth($(result).find('.c2'), totalWidth - width);
+                setWidth($(result).find('.c1'), axisWidth);
+                setWidth($(result).find('.c2'), totalWidth - axisWidth);
 
-                setHeight($(result).find('.c1r1'), height);
-                setHeight($(result).find('.c1r2'), totalHeight - height);
-                setHeight($(result).find('.c2r1'), height);
-                setHeight($(result).find('.c2r2'), totalHeight - height);
+                setHeight($(result).find('.c1r1'), axisHeight);
+                setHeight($(result).find('.c1r2'), totalHeight - axisHeight);
+                setHeight($(result).find('.c2r1'), axisHeight);
+                setHeight($(result).find('.c2r2'), totalHeight - axisHeight);
 
                 // col header and axis will always have same height
-                setHeight($(colHeaderTable), height);
-                setHeight($(axisTable), height);
+                setHeight($(colHeaderTable), axisHeight);
+                setHeight($(axisTable), axisHeight);
+                setHeight($(colHeaderTable).find('th'), units.height);
+                setHeight($(axisTable).find('th'), units.height);
 
                 // row header and axis will always have same width
-                setWidth($(rowHeaderTable), width);
-                setWidth($(axisTable), width);
+                setWidth($(rowHeaderTable), axisWidth);
+                setWidth($(axisTable), axisWidth);
+                setWidth($(rowHeaderTable).find('th'), units.width);
+                setWidth($(axisTable).find('th'), units.width);
 
                 // height of each th of row header should be in sync with each td of data
                 setHeight($(rowHeaderTable).find('th'), units.height);
-                setHeight($(colHeaderTable).find('tr'), units.height);
                 setHeight($(dataTable).find('td'), units.height);
 
                 // width of each th of col header should be in sync with each td of data

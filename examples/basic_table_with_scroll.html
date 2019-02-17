@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ultra Pivot</title>
+    <title>Ultra Pivot Basic</title>
 </head>
 <body>
 
@@ -18,7 +18,7 @@
 <script src="../libs/js/pivot.js"></script>
 <script src="../src/js/ultrapivot.js"></script>
 
-<div id="ultraPivotTable" style="width: 800px; height: 350px; margin-bottom: 20px"></div>
+<div id="ultraPivotTable" style="width: 800px; height: 400px;"></div>
 
 <script type="text/javascript" >
     let utils = $.pivotUtilities;
@@ -34,15 +34,7 @@
                 cols: ["Region", "Country"],
                 aggregator: sum(["Total Profit"]),
                 dataClass: dataClass,
-                renderer: renderer,
-                rendererOptions: {
-                    rowSubtotalDisplay: {
-                        disableExpandCollapse: false
-                    },
-                    colSubtotalDisplay: {
-                        disableExpandCollapse: false
-                    }
-                }
+                renderer: renderer
             }
         );
     });
