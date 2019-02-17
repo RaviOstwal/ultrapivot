@@ -381,6 +381,9 @@
                 }
                 return "" + arrow + h.text;
             };
+            var getSubtotalHeaderText = function(h) {
+                return opts.localeStrings.subtotalOf ?  opts.localeStrings.subtotalOf + ' ' + h.text : '';
+            };
             var buildColHeader = function(axisHeaders, attrHeaders, h, rowAttrs, colAttrs, node, opts) {
                 var ah, chKey, k, len, ref, ref1;
                 ref = h.children;
@@ -413,7 +416,7 @@
                             return h.onClick(axisHeaders, h, opts.colSubtotalDisplay);
                         };
                     }
-                    h.sTh = createElement("th", "pvtColLabelFiller " + classColShow + " col" + h.row + " colcol" + h.col + " " + classColExpanded);
+                    h.sTh = createElement("th", "pvtColLabelFiller " + classColShow + " col" + h.row + " colcol" + h.col + " " + classColExpanded, getSubtotalHeaderText(h));
                     h.sTh.setAttribute("data-colnode", h.node);
                     h.sTh.rowSpan = colAttrs.length - h.col;
                     if (opts.colSubtotalDisplay.hideOnExpand) {
@@ -480,7 +483,7 @@
                             return h.onClick(axisHeaders, h, opts.rowSubtotalDisplay);
                         };
                     }
-                    h.sTh = createElement("th", "pvtRowLabelFiller row" + h.row + " rowcol" + h.col + " " + classRowExpanded + " " + classRowShow);
+                    h.sTh = createElement("th", "pvtRowLabelFiller row" + h.row + " rowcol" + h.col + " " + classRowExpanded + " " + classRowShow, getSubtotalHeaderText(h));
                     if (opts.rowSubtotalDisplay.hideOnExpand) {
                         replaceClass(h.sTh, classRowShow, classRowHide);
                     }

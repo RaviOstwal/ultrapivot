@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ultra Pivot Basic</title>
+</head>
+<body>
+
+<!-- PivotTable.js libs from ../dist -->
+<link rel="stylesheet" type="text/css" href="../src/css/ultrapivot.css">
+
+<script type="text/javascript" src="../libs/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../libs/js/jquery.overlayScrollbars.js"></script>
+<link rel="stylesheet" type="text/css" href="../libs/css/OverlayScrollbars.css">
+<link rel="stylesheet" type="text/css" href="../libs/css/os-theme-thin-dark.css">
+<link rel="stylesheet" type="text/css" href="../libs/css/os-theme-thin-light.css">
+
+<script src="../libs/js/pivot.js"></script>
+<script src="../src/js/ultrapivot.js"></script>
+
+<div id="ultraPivot1"></div>
+<div id="ultraPivot2"></div>
+
+<script type="text/javascript" >
+    let utils = $.pivotUtilities;
+    let sum =  utils.aggregators["Sum"];
+    let dataClass = utils.SubtotalPivotData;
+    let renderer = utils.subtotal_renderers["Table With Subtotal"];
+
+    $("#ultraPivot1").pivot(
+        [
+            ["color", "shape", "measure", "value"],
+            ["blue", "circle", "profit", 1],
+            ["blue", "circle", "freight", 2],
+            ["blue", "triangle", "freight", 3],
+            ["red", "circle", "freight", 4],
+            ["red", "triangle", "profit", 5],
+            ["red", "triangle", "freight", 6]
+        ],
+        {
+            rows: ["shape", "measure"],
+            cols: ["color"],
+            aggregator: sum(["value"]),
+            dataClass: dataClass,
+            renderer: renderer,
+            rendererOptions: {
+                localeStrings: {
+                    subtotalOf: 'SubTotal - '
+                }
+            }
+        }
+    );
+
+    $("#ultraPivot2").pivot(
+        [
+            ["color", "shape", "measure", "value"],
+            ["blue", "circle", "profit", 1],
+            ["blue", "circle", "freight", 2],
+            ["blue", "triangle", "freight", 3],
+            ["red", "circle", "freight", 4],
+            ["red", "triangle", "profit", 5],
+            ["red", "triangle", "freight", 6]
+        ],
+        {
+            rows: ["shape", "measure"],
+            cols: ["color"],
+            aggregator: sum(["value"]),
+            dataClass: dataClass,
+            renderer: renderer,
+            rendererOptions: {
+                localeStrings: {
+                    subtotalOf: null
+                }
+            }
+        }
+    );
+</script>
+
+</body>
+</html>
