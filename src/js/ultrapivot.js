@@ -1099,6 +1099,10 @@
                     className: 'os-theme-thin-light',
                     autoUpdate: true,
                     autoUpdateInterval: 500,
+                    nativeScrollbarsOverlaid: {
+                        showNativeScrollbars: false,
+                        initialize: false
+                    },
                     overflowBehavior: {
                         x: 'scroll',
                         y: 'scroll'

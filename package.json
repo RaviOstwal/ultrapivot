@@ -1,0 +1,9 @@
+{
+    "name": "ultrapivot",
+    "version": "1.0.0",
+    "dependencies": {
+        "pivotable" : "^2.23.0",
+        "jquery": "^3.3.1",
+        "overlayscrollbars": "^1.6.3"
+    }
+}
