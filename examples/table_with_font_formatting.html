@@ -28,16 +28,16 @@
 
     $("#ultraPivotTable").pivot(
         [
-            ["color", "shape", "Measures", "value"],
-            ["blue", "circle", "SUM(Profit)", 1],
-            ["blue", "circle", "SUM(Freight)", 2],
-            ["blue", "triangle", "SUM(Freight)", 3],
-            ["red", "circle", "SUM(Freight)", 4],
-            ["red", "triangle", "SUM(Profit)", 5],
-            ["red", "triangle", "SUM(Freight)", 6]
+            ["color", "shape", "measure", "value"],
+            ["blue", "circle", "profit", 1],
+            ["blue", "circle", "freight", 2],
+            ["blue", "triangle", "freight", 3],
+            ["red", "circle", "freight", 4],
+            ["red", "triangle", "profit", 5],
+            ["red", "triangle", "freight", 6]
         ],
         {
-            rows: ["shape", "Measures"],
+            rows: ["shape", "measure"],
             cols: ["color"],
             aggregator: sum(["value"]),
             dataClass: dataClass,
@@ -48,7 +48,8 @@
                         fontSize: 10
                     },
                     rowHeaderFont: {
-                        fontSize: 12
+                        fontSize: 12,
+                        fontStyle: 'italic'
                     },
                     colHeaderFont: {
                         fontSize: 12
