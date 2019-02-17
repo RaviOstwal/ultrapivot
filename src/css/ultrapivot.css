@@ -1,0 +1,162 @@
+table.pvtTable thead, table.pvtTable th, table.pvtTable tr, table.pvtTable td {
+    font-size: 10px;
+}
+
+table.pvtTableContainer {
+    border-spacing: 0 !important;
+}
+
+table.pvtTableContainer > tr, table.pvtTableContainer > tr > td {
+    padding: 0 !important;
+}
+
+table.pvtTable {
+    color: #fff;
+    text-align: left;
+    border-collapse: collapse;
+    border-spacing: 0 !important;
+}
+
+table.pvtTable .pvtTotalLabel, table.pvtTable .pvtColSubtotal, table.pvtTable .pvtRowSubtotal,
+table.pvtTable .rowTotal, table.pvtTable .colTotal {
+    font-weight: bold;
+    background: #333;
+}
+
+table.pvtTable th, table.pvtTable td {
+    padding: 5px;
+}
+
+table.pvtTable tr {
+    border-bottom: 1px solid #888;
+    padding: 0 !important;
+}
+
+table.pvtTable .pvtRowLabel, table.pvtTable .pvtColLabel, table.pvtTable td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+table.pvtTable .pvtRowLabel, table.pvtTable .pvtRowLabelFiller {
+    vertical-align: top;
+    border-bottom: 1px solid #888;
+}
+
+table.pvtTable .pvtColLabel, table.pvtTable .pvtColLabelFiller {
+    text-align: left;
+    border-left: 1px solid #888;
+    border-right: 1px solid #888;
+}
+
+table.pvtTable {
+    background: #444;
+}
+
+table.pvtTable td {
+    border-left: 1px solid #888;
+    text-align: center;
+    background: #666;
+}
+
+.pvtTotal, .pvtGrandTotal {
+    font-weight: bold;
+}
+
+.pvtRowOrder, .pvtColOrder {
+    cursor:pointer;
+    width: 15px;
+    margin-left: 5px;
+    display: inline-block;
+}
+
+.pvtAggregator {
+    margin-bottom: 5px;
+}
+
+.pvtAxisContainer, .pvtVals {
+    padding: 5px;
+    min-width: 20px;
+    min-height: 20px;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none;
+}
+
+.pvtAxisContainer li {
+    padding: 8px 6px;
+    list-style-type: none;
+    cursor:move;
+}
+
+.pvtAxisContainer li.pvtPlaceholder {
+    padding: 3px 15px;
+}
+
+.pvtAxisContainer li span.pvtAttr {
+    -webkit-text-size-adjust: 100%;
+    padding: 2px 5px;
+    white-space:nowrap;
+}
+
+.pvtTriangle {
+    cursor:pointer;
+}
+
+.pvtHorizList li { display: inline; }
+.pvtVertList { vertical-align: top; }
+
+.pvtFilteredAttribute { font-style: italic }
+
+.pvtFilterBox{
+    z-index: 100;
+    width: 300px;
+    position: absolute;
+    text-align: center;
+}
+
+.pvtFilterBox h4{ margin: 15px; }
+.pvtFilterBox p { margin: 10px auto; }
+.pvtFilterBox label { font-weight: normal; }
+.pvtFilterBox input[type='checkbox'] { margin-right: 10px; margin-left: 10px; }
+.pvtFilterBox input[type='text'] { width: 230px; }
+.pvtFilterBox .count { font-weight: normal; margin-left: 3px;}
+
+.pvtCheckContainer{
+    text-align: left;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow-y: scroll;
+    width: 100%;
+    max-height: 250px;
+}
+
+.pvtCheckContainer p{ margin: 5px; }
+
+.pvtRendererArea { padding: 5px;}
+
+table.pvtTable .pvtAxisLabel {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.expanded {
+    cursor: pointer
+}
+
+/*
+*
+* IMPORTANT: Please do not remove the lines below this point
+*
+*/
+table.pvtTable tr .rowhide {
+    display: none;
+}
+
+table.pvtTable tr .colhide {
+    display: none;
+}
+
