@@ -1095,7 +1095,6 @@
 
                 var totalWidth = $(result).width();
                 var totalHeight = $(result).height();
-                console.log(totalWidth, totalHeight);
 
                 var dataUnits = getFontUnits(fontOptions.dataFont, defaults.fontOptions.dataFont);
                 var rowUnits = getFontUnits(fontOptions.rowHeaderFont, defaults.fontOptions.rowHeaderFont);
