@@ -23,6 +23,10 @@ table.pvtTable .rowTotal, table.pvtTable .colTotal {
     background: #333;
 }
 
+table.pvtTable .pvtGrandTotal {
+    background: #000;
+}
+
 table.pvtTable th, table.pvtTable td {
     padding: 5px;
 }

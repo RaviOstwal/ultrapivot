@@ -107,7 +107,7 @@
                 arrowCollapsed: "\u25B6",
                 arrowExpanded: "\u25E2",
                 rowSubtotalDisplay: {
-                    displayOnTop: true,
+                    displayOnTop: false,
                     disableFrom: 99999,
                     collapseAt: 99999,
                     hideOnExpand: false,
@@ -119,6 +119,26 @@
                     collapseAt: 99999,
                     hideOnExpand: false,
                     disableExpandCollapse: false
+                },
+                fontOptions: {
+                    dataFont: {
+                        fontStyle: 'normal',
+                        fontWeight: 'normal',
+                        fontFamily: 'Lato',
+                        fontSize: 10
+                    },
+                    rowHeaderFont: {
+                        fontStyle: 'normal',
+                        fontWeight: 'bold',
+                        fontFamily: 'Lato',
+                        fontSize: 10
+                    },
+                    colHeaderFont: {
+                        fontStyle: 'normal',
+                        fontWeight: 'bold',
+                        fontFamily: 'Lato',
+                        fontSize: 10
+                    }
                 }
             };
             opts = $.extend(true, {}, defaults, opts);
@@ -1020,13 +1040,22 @@
                 return results;
             };
 
-            var setSizes = function(fontOption) {
-                fontOption = fontOption ? fontOption : {};
-                var font = fontOption.font ? fontOption.font : { size: 10 }; // {size,family,vAlign,hAlign,rotate}
-                var rowHeaderFont = fontOption.rowHeaderFont ? fontOption.rowHeaderFont : font;
-                var colHeaderFont = fontOption.colHeaderFont ? fontOption.colHeaderFont : font;
-                var dataFont = fontOption.dataFont ? fontOption.dataFont : font;
+            function setFont($element, font, force, defaultFont) {
+                if (defaultFont.fontStyle !== font.fontStyle) {
+                    $element.css('fontStyle', font.fontStyle);
+                }
+                if (defaultFont.fontWeight !== font.fontWeight) {
+                    $element.css('fontWeight', font.fontWeight);
+                }
+                if (defaultFont.fontFamily !== font.fontFamily) {
+                    $element.css('fontFamily', font.fontFamily);
+                }
+                if (force || defaultFont.fontSize !== font.fontSize) {
+                    $element.css('fontSize', font.fontSize);
+                }
+            }
 
+            var setSizes = function(fontOptions) {
                 function setWidth($ele, width) {
                     //width = isNaN(width) ? width : (width + 'px');
                     $ele.css('width', width);
@@ -1041,19 +1070,39 @@
                     $ele.css('max-height', height);
                 }
 
-                function getFontUnits(font) {
-                    if (font.size == 10) {
-                        return { height: 15, width: 80};
-                    }
-                    return { height: 15, width: 80};
-                }
+                function getFontUnits(font, defaultFont) {
+                    var test = $(createElement('div', 'pivot_test'));
+                    test.css('position', 'absolute');
+                    test.css('visibility', 'hidden');
+                    test.css('height', 'auto');
+                    test.css('width', 'auto');
+                    test.css('white-space', 'nowrap');
+                    $(result).append(test);
 
-                var units = getFontUnits(font);
-                var height = ((units.height + 10) * (colAttrs.length + 1)) + 1;
-                var width = (units.width + 10) * (rowAttrs.length + 1);
+                    setFont(test, font, true, defaultFont);
+                    test.text("◢ Ravi Ostwal Jain");
+
+                    var height = Math.ceil(test.height()) + 1;
+                    var width = Math.ceil(test.width()) + 1;
+
+                    test.remove();
+
+                    return { height: height, width: width};
+                }
 
                 var totalWidth = $(result).width();
                 var totalHeight = $(result).height();
+
+                var dataUnits = getFontUnits(fontOptions.dataFont, defaults.fontOptions.dataFont);
+                var rowUnits = getFontUnits(fontOptions.rowHeaderFont, defaults.fontOptions.rowHeaderFont);
+                var columnUnits = getFontUnits(fontOptions.colHeaderFont, defaults.fontOptions.colHeaderFont);
+
+                var units = {
+                    height: Math.max(Math.max(rowUnits.height, dataUnits.height), columnUnits.height),
+                    width: Math.max(Math.max(rowUnits.width, dataUnits.width), columnUnits.width)
+                };
+                var height = ((units.height + 10) * (colAttrs.length + 1)) + 1;
+                var width = (units.width + 10) * (rowAttrs.length + 1);
 
                 setWidth($(result).find('.c1'), width);
                 setWidth($(result).find('.c2'), totalWidth - width);
@@ -1079,6 +1128,20 @@
                 // width of each th of col header should be in sync with each td of data
                 setWidth($(colHeaderTable).find('th'), units.width);
                 setWidth($(dataTable).find('td'), units.width);
+
+                applyFonts(fontOptions);
+            };
+
+            var applyFonts = function(fontOptions) {
+                // Font to column header and axis will be same
+                setFont($(axisTable).find('th'), fontOptions.colHeaderFont, false, defaults.fontOptions.colHeaderFont);
+                setFont($(colHeaderTable).find('th'), fontOptions.colHeaderFont, false, defaults.fontOptions.colHeaderFont);
+
+                // row header will have its own font
+                setFont($(rowHeaderTable).find('th'), fontOptions.rowHeaderFont, false, defaults.fontOptions.rowHeaderFont);
+
+                // data will have its own font
+                setFont($(dataTable).find('td'), fontOptions.dataFont, false, defaults.fontOptions.dataFont);
             };
 
             var initScrolls = function() {
@@ -1092,16 +1155,16 @@
                 };
 
                 var onContentSizeChanged = function() {
-                    setSizes();
+                    setSizes(opts.fontOptions);
                 };
 
                 scrollBar = OverlayScrollbars($(result).find('.c2r2'), {
                     className: 'os-theme-thin-light',
                     autoUpdate: true,
                     autoUpdateInterval: 500,
-                    nativeScrollbarsOverlaid: {
+                    nativeScrollbarsOverlaid : {
                         showNativeScrollbars: false,
-                        initialize: false
+                        initialize : false
                     },
                     overflowBehavior: {
                         x: 'scroll',
@@ -1202,7 +1265,7 @@
                 result.setAttribute("data-numcols", colKeys.length);
 
                 setTimeout(function () {
-                    setSizes();
+                    setSizes(opts.fontOptions);
                     initScrolls();
                     $(result).find('.pvtTableInnerContainer').css('display', 'flex');
                 }, 0);
