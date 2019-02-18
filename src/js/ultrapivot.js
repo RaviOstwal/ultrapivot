@@ -183,6 +183,7 @@
             var classColCollapsed = "colcollapsed";
             var arrowExpanded = opts.arrowExpanded;
             var arrowCollapsed = opts.arrowCollapsed;
+            var sizesInitialized = false;
             var hasClass = function(element, className) {
                 var regExp;
                 regExp = new RegExp("(?:^|\\s)" + className + "(?!\\S)", "g");
@@ -1059,6 +1060,8 @@
                 }
             }
             var setSizes = function(fontOptions) {
+                if (sizesInitialized) return;
+                sizesInitialized = true;
                 function setWidth($ele, width) {
                     //width = isNaN(width) ? width : (width + 'px');
                     $ele.css('width', width);
@@ -1190,7 +1193,7 @@
             };
 
             var main = function(rowAttrs, rowKeys, colAttrs, colKeys) {
-                var chKey, colAttrHeaders, colAxisHeaders, colKeyHeaders, k, l, len, len1, node, ref, ref1, rowAttrHeaders, rowAxisHeaders, rowKeyHeaders, tbody, thead, tr;
+                var chKey, colAttrHeaders, colAxisHeaders, colKeyHeaders, k, l, len, len1, node, ref, ref1, rowAttrHeaders, rowAxisHeaders, rowKeyHeaders, tr;
                 rowAttrHeaders = [];
                 colAttrHeaders = [];
                 if (colAttrs.length !== 0 && colKeys.length !== 0) {
@@ -1269,8 +1272,11 @@
                 result.setAttribute("data-numcols", colKeys.length);
 
                 setTimeout(function () {
-                    initScrolls();
                     $(result).find('.pvtTableInnerContainer').css('display', 'flex');
+                    initScrolls();
+                    if (!sizesInitialized) {
+                        setSizes(opts.fontOptions);
+                    }
                 }, 0);
                 return result;
             };
