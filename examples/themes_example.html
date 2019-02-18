@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ultra Pivot Basic</title>
+</head>
+<body>
+
+<!-- PivotTable.js libs from ../dist -->
+<link rel="stylesheet" type="text/css" href="../src/css/ultrapivot.css">
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-dark.css">
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-light.css">
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-material-dark.css">
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-material-light.css">
+
+<script type="text/javascript" src="../libs/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../libs/js/jquery.overlayScrollbars.js"></script>
+<link rel="stylesheet" type="text/css" href="../libs/css/OverlayScrollbars.css">
+<link rel="stylesheet" type="text/css" href="../libs/css/os-theme-thin-dark.css">
+<link rel="stylesheet" type="text/css" href="../libs/css/os-theme-thin-light.css">
+
+<script src="../libs/js/pivot.js"></script>
+<script src="../src/js/dataprocessor.js"></script>
+<script src="../src/js/aggregators.js"></script>
+<script src="../src/js/renderers.js"></script>
+
+<div id="ultraPivotTable0" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
+<div id="ultraPivotTable1" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
+<div id="ultraPivotTable2" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
+<div id="ultraPivotTable3" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
+
+<script type="text/javascript">
+    let utils = $.pivotUtilities;
+    let sum =  utils.aggregators["Sum"];
+    let dataClass = utils.SubtotalPivotData;
+    let renderer = utils.subtotal_renderers["Table With Subtotal"];
+
+    var themes = ['ultra-pivot-dark', 'ultra-pivot-light', 'ultra-pivot-material-dark', 'ultra-pivot-material-light'];
+
+    $.getJSON( "sample_data.json", function( data ) {
+        for (var i = 0; i < 4; i++) {
+            $("#ultraPivotTable" + i).pivot(
+                data,
+                {
+                    rows: ["Sales Channel", "Order Priority", "Item Type"],
+                    cols: ["Region", "Country"],
+                    aggregator: sum(["Total Profit"]),
+                    dataClass: dataClass,
+                    renderer: renderer,
+                    rendererOptions: {
+                        theme: themes[i]
+                    }
+                }
+            );
+        }
+    });
+</script>
+
+</body>
+</html>

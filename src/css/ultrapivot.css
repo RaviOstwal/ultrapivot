@@ -11,7 +11,6 @@ table.pvtTableContainer > tr, table.pvtTableContainer > tr > td {
 }
 
 table.pvtTable {
-    color: #fff;
     text-align: left;
     border-collapse: collapse;
     border-spacing: 0 !important;
@@ -20,22 +19,13 @@ table.pvtTable {
 table.pvtTable .pvtTotalLabel, table.pvtTable .pvtColSubtotal, table.pvtTable .pvtRowSubtotal,
 table.pvtTable .rowTotal, table.pvtTable .colTotal {
     font-weight: bold;
-    background: #333;
 }
-
-table.pvtTable .pvtGrandTotal {
-    background: #000;
-}
-
-table.dataTable tr:nth-child(odd) {background: #CCC !important;}
-table.dataTable tr:nth-child(even) {background: #AAA !important;}
 
 table.pvtTable th, table.pvtTable td {
     padding: 5px !important;
 }
 
 table.pvtTable tr {
-    border-bottom: 1px solid #888;
     padding: 0 !important;
 }
 
@@ -47,23 +37,14 @@ table.pvtTable .pvtRowLabel, table.pvtTable .pvtColLabel, table.pvtTable td {
 
 table.pvtTable .pvtRowLabel, table.pvtTable .pvtRowLabelFiller {
     vertical-align: top;
-    border-bottom: 1px solid #888;
 }
 
 table.pvtTable .pvtColLabel, table.pvtTable .pvtColLabelFiller {
     text-align: left;
-    border-left: 1px solid #888;
-    border-right: 1px solid #888;
-}
-
-table.pvtTable {
-    background: #444;
 }
 
 table.pvtTable td {
-    border-left: 1px solid #888;
     text-align: center;
-    background: #666;
 }
 
 .pvtTotal, .pvtGrandTotal {

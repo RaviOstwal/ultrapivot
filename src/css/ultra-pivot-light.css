@@ -1,0 +1,42 @@
+.ultra-pivot-light table.pvtTable {
+    color: #111;
+}
+
+/* full tables background*/
+.ultra-pivot-light table.pvtTable {
+    background: #e5e5e5;
+}
+
+/* data rows background*/
+.ultra-pivot-light table.dataTable tr:nth-child(odd) {background: #eee !important;}
+.ultra-pivot-light table.dataTable tr:nth-child(even) {background: #ddd !important;}
+
+/* subtotals background*/
+.ultra-pivot-light table.pvtTable .rowTotal,
+.ultra-pivot-light table.pvtTable .colTotal,
+.ultra-pivot-light table.pvtTable .pvtTotalLabel,
+.ultra-pivot-light table.pvtTable .pvtColSubtotal,
+.ultra-pivot-light table.pvtTable .pvtRowSubtotal,
+.ultra-pivot-light table.pvtTable .pvtRowLabelFiller,
+.ultra-pivot-light table.pvtTable .pvtColLabelFiller {
+    background: #aaa;
+}
+
+/* grand total background*/
+.ultra-pivot-light table.pvtTable .pvtGrandTotal {
+    background: #888;
+}
+
+.ultra-pivot-light table.pvtTable tr {
+    border-bottom: 1px solid #757575;
+}
+
+.ultra-pivot-light table.pvtTable .pvtColLabel,
+.ultra-pivot-light table.pvtTable .pvtColLabelFiller {
+    border-left: 1px solid #757575;
+    border-right: 1px solid #757575;
+}
+
+.ultra-pivot-light table.pvtTable td {
+    border-left: 1px solid #757575;
+}

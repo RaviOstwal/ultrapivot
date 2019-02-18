@@ -1,8 +1,6 @@
 (function() {
     var callWithJQuery,
-        extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
         hasProp = {}.hasOwnProperty,
-        slice = [].slice;
 
     callWithJQuery = function(pivotModule) {
         if (typeof exports === "object" && typeof module === "object") {
@@ -15,86 +13,8 @@
     };
 
     callWithJQuery(function($) {
-        var SubtotalPivotData, SubtotalRenderer, aggregatorTemplates, subtotalAggregatorTemplates, usFmtPct;
 
-        SubtotalPivotData = (function(superClass) {
-            var processKey;
-
-            extend(SubtotalPivotData, superClass);
-
-            function SubtotalPivotData(input, opts) {
-                SubtotalPivotData.__super__.constructor.call(this, input, opts);
-            }
-
-            processKey = function(record, totals, keys, attrs, getAggregator) {
-                var addKey, attr, flatKey, k, key, len, ref;
-                key = [];
-                addKey = false;
-                for (k = 0, len = attrs.length; k < len; k++) {
-                    attr = attrs[k];
-                    key.push((ref = record[attr]) != null ? ref : "null");
-                    flatKey = key.join(String.fromCharCode(0));
-                    if (!totals[flatKey]) {
-                        totals[flatKey] = getAggregator(key.slice());
-                        addKey = true;
-                    }
-                    totals[flatKey].push(record);
-                }
-                if (addKey) {
-                    keys.push(key);
-                }
-                return key;
-            };
-
-            SubtotalPivotData.prototype.processRecord = function(record) {
-                var colKey, fColKey, fRowKey, flatColKey, flatRowKey, i, j, k, m, n, ref, results, rowKey;
-                rowKey = [];
-                colKey = [];
-                this.allTotal.push(record);
-                rowKey = processKey(record, this.rowTotals, this.rowKeys, this.rowAttrs, (function(_this) {
-                    return function(key) {
-                        return _this.aggregator(_this, key, []);
-                    };
-                })(this));
-                colKey = processKey(record, this.colTotals, this.colKeys, this.colAttrs, (function(_this) {
-                    return function(key) {
-                        return _this.aggregator(_this, [], key);
-                    };
-                })(this));
-                m = rowKey.length - 1;
-                n = colKey.length - 1;
-                if (m < 0 || n < 0) {
-                    return;
-                }
-                results = [];
-                for (i = k = 0, ref = m; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
-                    fRowKey = rowKey.slice(0, i + 1);
-                    flatRowKey = fRowKey.join(String.fromCharCode(0));
-                    if (!this.tree[flatRowKey]) {
-                        this.tree[flatRowKey] = {};
-                    }
-                    results.push((function() {
-                        var l, ref1, results1;
-                        results1 = [];
-                        for (j = l = 0, ref1 = n; 0 <= ref1 ? l <= ref1 : l >= ref1; j = 0 <= ref1 ? ++l : --l) {
-                            fColKey = colKey.slice(0, j + 1);
-                            flatColKey = fColKey.join(String.fromCharCode(0));
-                            if (!this.tree[flatRowKey][flatColKey]) {
-                                this.tree[flatRowKey][flatColKey] = this.aggregator(this, fRowKey, fColKey);
-                            }
-                            results1.push(this.tree[flatRowKey][flatColKey].push(record));
-                        }
-                        return results1;
-                    }).call(this));
-                }
-                return results;
-            };
-
-            return SubtotalPivotData;
-
-        })($.pivotUtilities.PivotData);
-        $.pivotUtilities.SubtotalPivotData = SubtotalPivotData;
-
+        var SubtotalRenderer;
         SubtotalRenderer = function(pivotData, opts) {
             var result, axisTable, colHeaderTable, rowHeaderTable, dataTable;
             var defaults = {
@@ -140,7 +60,8 @@
                         fontFamily: 'Lato',
                         fontSize: 10
                     }
-                }
+                },
+                theme: 'ultra-pivot-dark'
             };
             opts = $.extend(true, {}, defaults, opts);
             if (opts.rowSubtotalDisplay.disableSubtotal) {
@@ -1221,7 +1142,7 @@
 
             var createScroller = function($content, overflowBehavior, callbacks, visibility) {
                 return OverlayScrollbars($content, {
-                    className: 'os-theme-thin-light',
+                    className: opts.theme.indexOf('dark') > 0 ? 'os-theme-thin-light' : 'os-theme-thin-dark',
                     autoUpdate: true,
                     autoUpdateInterval: 500,
                     nativeScrollbarsOverlaid : {
@@ -1264,6 +1185,7 @@
                         </div>');
 
                 result = $outerContainer[0];
+                $(result).addClass(opts.theme);
                 axisTable = $outerContainer.find('.axisTable')[0];
                 rowHeaderTable = $outerContainer.find('.rowHeaderTable')[0];
                 colHeaderTable = $outerContainer.find('.colHeaderTable')[0];
@@ -1360,58 +1282,6 @@
                 return $(SubtotalRenderer(pvtData, opts)).heatmap("colheatmap", opts);
             }
         };
-        usFmtPct = $.pivotUtilities.numberFormat({
-            digitsAfterDecimal: 1,
-            scaler: 100,
-            suffix: "%"
-        });
-        aggregatorTemplates = $.pivotUtilities.aggregatorTemplates;
-        subtotalAggregatorTemplates = {
-            fractionOf: function(wrapped, type, formatter) {
-                if (type == null) {
-                    type = "row";
-                }
-                if (formatter == null) {
-                    formatter = usFmtPct;
-                }
-                return function() {
-                    var x;
-                    x = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-                    return function(data, rowKey, colKey) {
-                        if (typeof rowKey === "undefined") {
-                            rowKey = [];
-                        }
-                        if (typeof colKey === "undefined") {
-                            colKey = [];
-                        }
-                        return {
-                            selector: {
-                                row: [rowKey.slice(0, -1), []],
-                                col: [[], colKey.slice(0, -1)]
-                            }[type],
-                            inner: wrapped.apply(null, x)(data, rowKey, colKey),
-                            push: function(record) {
-                                return this.inner.push(record);
-                            },
-                            format: formatter,
-                            value: function() {
-                                return this.inner.value() / data.getAggregator.apply(data, this.selector).inner.value();
-                            },
-                            numInputs: wrapped.apply(null, x)().numInputs
-                        };
-                    };
-                };
-            }
-        };
-        $.pivotUtilities.subtotalAggregatorTemplates = subtotalAggregatorTemplates;
-        return $.pivotUtilities.subtotal_aggregators = (function(tpl, sTpl) {
-            return {
-                "Sum As Fraction Of Parent Row": sTpl.fractionOf(tpl.sum(), "row", usFmtPct),
-                "Sum As Fraction Of Parent Column": sTpl.fractionOf(tpl.sum(), "col", usFmtPct),
-                "Count As Fraction Of Parent Row": sTpl.fractionOf(tpl.count(), "row", usFmtPct),
-                "Count As Fraction Of Parent Column": sTpl.fractionOf(tpl.count(), "col", usFmtPct)
-            };
-        })(aggregatorTemplates, subtotalAggregatorTemplates);
     });
 
 }).call(this);
