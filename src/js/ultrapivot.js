@@ -1058,7 +1058,8 @@
                 if (force || defaultFont.fontSize !== font.fontSize) {
                     $element.css('fontSize', font.fontSize);
                 }
-            }
+            };
+
             var setSizes = function(fontOptions) {
                 if (sizesInitialized) return;
                 sizesInitialized = true;
@@ -1140,6 +1141,7 @@
 
                 applyFonts(fontOptions);
             };
+
             var applyFonts = function(fontOptions) {
                 // Font to column header and axis will be same
                 setFont($(axisTable).find('th'), fontOptions.colHeaderFont, false, defaults.fontOptions.colHeaderFont);
@@ -1151,21 +1153,74 @@
                 // data will have its own font
                 setFont($(dataTable).find('td'), fontOptions.dataFont, false, defaults.fontOptions.dataFont);
             };
+
             var initScrolls = function() {
-                var scrollBar = null;
+                var dataScroller, rowScroller, colScroller, coord = {x: 0, y: 0};
 
-                var onScroll = function() {
-                    var scroll = scrollBar.scroll();
+                var onDataScroll = function() {
+                    var scroll = dataScroller.scroll();
+                    if (coord.x === scroll.x.position && coord.y === scroll.y.position) return;
 
-                    $(result).find('.c1r2').scrollTop(scroll.y.position);
-                    $(result).find('.c2r1').scrollLeft(scroll.x.position);
+                    coord.x = scroll.x.position;
+                    coord.y = scroll.y.position;
+                    rowScroller.scroll({y : scroll.y.position});
+                    colScroller.scroll({x : scroll.x.position});
+                    onTableScroll({x : scroll.x, y: scroll.y});
+                };
+
+                var onRowScroll = function() {
+                    var scroll = rowScroller.scroll();
+                    if (coord.y === scroll.y.position) return;
+
+                    coord.y = scroll.y.position;
+                    dataScroller.scroll({y : scroll.y.position});
+                    onTableScroll({y : scroll.y});
+                };
+
+                var onColScroll = function() {
+                    var scroll = colScroller.scroll();
+                    if (coord.x === scroll.x.position) return;
+
+                    coord.x = scroll.x.position;
+                    dataScroller.scroll({x : scroll.x.position});
+                    onTableScroll({x : scroll.x});
                 };
 
                 var onContentSizeChanged = function() {
                     setSizes(opts.fontOptions);
                 };
 
-                scrollBar = OverlayScrollbars($(result).find('.c2r2'), {
+                dataScroller = createScroller($(result).find('.c2r2'),
+                    {
+                        x: 'scroll',
+                        y: 'scroll'
+                    },
+                    {
+                        onScroll: onDataScroll,
+                        onContentSizeChanged: onContentSizeChanged
+                    }, 'auto');
+
+                rowScroller = createScroller($(result).find('.c1r2'),
+                    {
+                        x: 'hidden',
+                        y: 'scroll'
+                    },
+                    {
+                        onScroll: onRowScroll
+                    }, 'hidden');
+
+                colScroller = createScroller($(result).find('.c2r1'),
+                    {
+                        x: 'scroll',
+                        y: 'hidden'
+                    },
+                    {
+                        onScroll: onColScroll
+                    }, 'hidden');
+            };
+
+            var createScroller = function($content, overflowBehavior, callbacks, visibility) {
+                return OverlayScrollbars($content, {
                     className: 'os-theme-thin-light',
                     autoUpdate: true,
                     autoUpdateInterval: 500,
@@ -1173,36 +1228,20 @@
                         showNativeScrollbars: false,
                         initialize : false
                     },
-                    overflowBehavior: {
-                        x: 'scroll',
-                        y: 'scroll'
-                    },
+                    overflowBehavior: overflowBehavior,
                     scrollbars: {
-                        visibility: 'auto',
+                        visibility: visibility,
                         autoHide: 'leave',
-                        autoHideDelay: 100,
+                        autoHideDelay: 500,
                         dragScrolling: true,
                         clickScrolling: false,
                         touchSupport: true
                     },
-                    callbacks: {
-                        onScroll: onScroll,
-                        onContentSizeChanged: onContentSizeChanged
-                    }
+                    callbacks: callbacks
                 });
             };
 
-            var main = function(rowAttrs, rowKeys, colAttrs, colKeys) {
-                var chKey, colAttrHeaders, colAxisHeaders, colKeyHeaders, k, l, len, len1, node, ref, ref1, rowAttrHeaders, rowAxisHeaders, rowKeyHeaders, tr;
-                rowAttrHeaders = [];
-                colAttrHeaders = [];
-                if (colAttrs.length !== 0 && colKeys.length !== 0) {
-                    colKeyHeaders = processKeys(colKeys, "pvtColLabel");
-                }
-                if (rowAttrs.length !== 0 && rowKeys.length !== 0) {
-                    rowKeyHeaders = processKeys(rowKeys, "pvtRowLabel");
-                }
-
+            var initTables = function() {
                 var $outerContainer = $('<div style="width: 100%; height: 100%;">\
                             <div class="pvtTableInnerContainer" style="width: 100%; height: 100%; display: none; flex-direction: row;">\
                                 <div class="c1" style="width: 120px; height: 100%;">\
@@ -1229,6 +1268,22 @@
                 rowHeaderTable = $outerContainer.find('.rowHeaderTable')[0];
                 colHeaderTable = $outerContainer.find('.colHeaderTable')[0];
                 dataTable = $outerContainer.find('.dataTable')[0];
+            };
+
+            var onTableScroll = function(scroll) {
+                // console.log(scroll.x, scroll.y);
+            };
+
+            var render = function(rowAttrs, rowKeys, colAttrs, colKeys) {
+                var chKey, colAttrHeaders, colAxisHeaders, colKeyHeaders, k, l, len, len1, node, ref, ref1, rowAttrHeaders, rowAxisHeaders, rowKeyHeaders, tr;
+                rowAttrHeaders = [];
+                colAttrHeaders = [];
+                if (colAttrs.length !== 0 && colKeys.length !== 0) {
+                    colKeyHeaders = processKeys(colKeys, "pvtColLabel");
+                }
+                if (rowAttrs.length !== 0 && rowKeys.length !== 0) {
+                    rowKeyHeaders = processKeys(rowKeys, "pvtRowLabel");
+                }
 
                 if (colAttrs.length !== 0) {
                     colAxisHeaders = buildColAxisHeaders(rowAttrs, colAttrs, opts);
@@ -1280,6 +1335,12 @@
                 }, 0);
                 return result;
             };
+
+            var main = function(rowAttrs, rowKeys, colAttrs, colKeys) {
+                initTables();
+                return render(rowAttrs, rowKeys, colAttrs, colKeys);
+            };
+
             return main(rowAttrs, rowKeys, colAttrs, colKeys);
         };
         $.pivotUtilities.subtotal_renderers = {
