@@ -1,22 +1,22 @@
 .ultra-pivot-material-dark table.pvtTable {
-    color: #fff;
+    color: #111;
 }
 
 /* full tables background*/
 .ultra-pivot-material-dark table.axisTable,
 .ultra-pivot-material-dark table.rowHeaderTable {
-    background: linear-gradient(to right,#3F51B5,#2196F3);
+    background: #1E88E5;
 }
 
 /* full tables background*/
 .ultra-pivot-material-dark table.dataTable,
 .ultra-pivot-material-dark table.colHeaderTable {
-    background: linear-gradient(to left,#3F51B5,#2196F3);
+    background: #1E88E5;
 }
 
 /* data rows background*/
-.ultra-pivot-material-dark table.dataTable tr:nth-child(odd) {background: #CCC !important;}
-.ultra-pivot-material-dark table.dataTable tr:nth-child(even) {background: #AAA !important;}
+.ultra-pivot-material-dark table.dataTable tr:nth-child(odd) {background: #90CAF9 !important;}
+.ultra-pivot-material-dark table.dataTable tr:nth-child(even) {background: #BBDEFB !important;}
 
 /* subtotals background*/
 .ultra-pivot-material-dark table.pvtTable .rowTotal,
@@ -26,24 +26,25 @@
 .ultra-pivot-material-dark table.pvtTable .pvtRowSubtotal,
 .ultra-pivot-material-dark table.pvtTable .pvtRowLabelFiller,
 .ultra-pivot-material-dark table.pvtTable .pvtColLabelFiller {
-    background: #333;
+    background: #127bd6;
 }
 
 /* grand total background*/
 .ultra-pivot-material-dark table.pvtTable .pvtGrandTotal {
-    background: #111;
+    background: #0d68b7;
 }
 
 .ultra-pivot-material-dark table.pvtTable tr {
-    border-bottom: 1px solid #fafafa;
+    border-bottom: 1px solid #9FA8DA;
 }
 
 .ultra-pivot-material-dark table.pvtTable .pvtColLabel,
+.ultra-pivot-dark table.pvtTable .pvtTotalLabel.rowTotal,
 .ultra-pivot-material-dark table.pvtTable .pvtColLabelFiller {
-    border-left: 1px solid #fafafa;
-    border-right: 1px solid #fafafa;
+    border-left: 1px solid #9FA8DA;
+    border-right: 1px solid #9FA8DA;
 }
 
 .ultra-pivot-material-dark table.pvtTable td {
-    border-left: 1px solid #fafafa;
+    border-left: 1px solid #9FA8DA;
 }

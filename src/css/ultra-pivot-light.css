@@ -19,12 +19,12 @@
 .ultra-pivot-light table.pvtTable .pvtRowSubtotal,
 .ultra-pivot-light table.pvtTable .pvtRowLabelFiller,
 .ultra-pivot-light table.pvtTable .pvtColLabelFiller {
-    background: #aaa;
+    background: #CCC;
 }
 
 /* grand total background*/
 .ultra-pivot-light table.pvtTable .pvtGrandTotal {
-    background: #888;
+    background: #AAA;
 }
 
 .ultra-pivot-light table.pvtTable tr {
@@ -32,6 +32,7 @@
 }
 
 .ultra-pivot-light table.pvtTable .pvtColLabel,
+.ultra-pivot-dark table.pvtTable .pvtTotalLabel.rowTotal,
 .ultra-pivot-light table.pvtTable .pvtColLabelFiller {
     border-left: 1px solid #757575;
     border-right: 1px solid #757575;
