@@ -1,0 +1,43 @@
+.ultra-pivot-ultra-light table.pvtTable {
+    color: #616161;
+}
+
+/* full tables background*/
+.ultra-pivot-ultra-light table.pvtTable {
+    background: #f5f7f7;
+}
+
+/* data rows background*/
+.ultra-pivot-ultra-light table.dataTable tr:nth-child(odd) {background: white !important;}
+.ultra-pivot-ultra-light table.dataTable tr:nth-child(even) {background: #fcfdfe !important;}
+
+/* subtotals background*/
+.ultra-pivot-ultra-light table.pvtTable .rowTotal,
+.ultra-pivot-ultra-light table.pvtTable .colTotal,
+.ultra-pivot-ultra-light table.pvtTable .pvtTotalLabel,
+.ultra-pivot-ultra-light table.pvtTable .pvtColSubtotal,
+.ultra-pivot-ultra-light table.pvtTable .pvtRowSubtotal,
+.ultra-pivot-ultra-light table.pvtTable .pvtRowLabelFiller,
+.ultra-pivot-ultra-light table.pvtTable .pvtColLabelFiller {
+    background: #f3f3f3;
+}
+
+/* grand total background*/
+.ultra-pivot-ultra-light table.pvtTable .pvtGrandTotal {
+    background: #e3e3e3;
+}
+
+.ultra-pivot-ultra-light table.pvtTable tr {
+    border-bottom: 1px solid #757575;
+}
+
+.ultra-pivot-ultra-light table.pvtTable .pvtColLabel,
+.ultra-pivot-dark table.pvtTable .pvtTotalLabel.rowTotal,
+.ultra-pivot-ultra-light table.pvtTable .pvtColLabelFiller {
+    border-left: 1px solid #757575;
+    border-right: 1px solid #757575;
+}
+
+.ultra-pivot-ultra-light table.pvtTable td {
+    border-left: 1px solid #757575;
+}

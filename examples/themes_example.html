@@ -7,10 +7,11 @@
 <body>
 
 <!-- PivotTable.js libs from ../dist -->
-<link rel="stylesheet" type="text/css" href="../src/css/ultrapivot.css">
-<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-dark.css">
-<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-light.css">
-<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-material-blue.css">
+<link rel="stylesheet" type="text/css" href="../src/css/ultrapivot.css"/>
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-dark.css"/>
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-light.css"/>
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-ultra-light.css"/>
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-material-blue.css"/>
 
 <script type="text/javascript" src="../libs/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../libs/js/jquery.overlayScrollbars.js"></script>
@@ -26,6 +27,8 @@
 <div id="ultraPivotTable0" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
 <p>Light Theme: "ultra-pivot-light"</p>
 <div id="ultraPivotTable1" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
+<p>Ultra Light Theme: "ultra-pivot-ultra-light"</p>
+<div id="ultraPivotTable2" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
 
 <script type="text/javascript">
     let utils = $.pivotUtilities;
@@ -33,10 +36,10 @@
     let dataClass = utils.SubtotalPivotData;
     let renderer = utils.subtotal_renderers["Table With Subtotal"];
 
-    var themes = ['ultra-pivot-dark', 'ultra-pivot-light', 'ultra-pivot-material-blue'];
+    var themes = ['ultra-pivot-dark', 'ultra-pivot-light', 'ultra-pivot-ultra-light', 'ultra-pivot-material-blue'];
 
     $.getJSON( "sample_data.json", function( data ) {
-        for (var i = 0; i < 2; i++) {
+        for (var i = 0; i < 3; i++) {
             $("#ultraPivotTable" + i).pivot(
                 data,
                 {
