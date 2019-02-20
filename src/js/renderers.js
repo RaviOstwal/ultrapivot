@@ -14,8 +14,19 @@
 
     callWithJQuery(function($) {
 
-        var SubtotalRenderer;
-        SubtotalRenderer = function(pivotData, opts) {
+        var Renderer = function(pivotData, opts) {
+            var ultraPivotRenderer = new UltraPivotRenderer(pivotData, opts);
+            return ultraPivotRenderer.getTableElement();
+        };
+
+        // An interface to create additional extensions over the core features
+        var UltraPivotExtension = function () {
+            this.added = function (options) {};
+            this.on = function (event) {};
+            this.removed = function (error) {};
+        };
+
+        var UltraPivotRenderer = function(pivotData, options) {
             var result, axisTable, colHeaderTable, rowHeaderTable, dataTable;
             var defaults = {
                 table: {
@@ -63,7 +74,23 @@
                 },
                 theme: 'ultra-pivot-dark'
             };
-            opts = $.extend(true, {}, defaults, opts);
+            var opts, colAttrs, rowAttrs, rowKeys, colKeys, tree, rowTotals, colTotals, allTotal, arrowExpanded, arrowCollapsed;
+
+            var classRowHide = "rowhide";
+            var classRowShow = "rowshow";
+            var classColHide = "colhide";
+            var classColShow = "colshow";
+            var clickStatusExpanded = "expanded";
+            var clickStatusCollapsed = "collapsed";
+            var classExpanded = "expanded";
+            var classCollapsed = "collapsed";
+            var classRowExpanded = "rowexpanded";
+            var classRowCollapsed = "rowcollapsed";
+            var classColExpanded = "colexpanded";
+            var classColCollapsed = "colcollapsed";
+            var sizesInitialized = false;
+
+            opts = $.extend(true, {}, defaults, options);
             if (opts.rowSubtotalDisplay.disableSubtotal) {
                 opts.rowSubtotalDisplay.disableFrom = 0;
             }
@@ -82,29 +109,80 @@
             if (typeof opts.colSubtotalDisplay.collapseAt !== 'undefined' && opts.collapseColsAt !== null) {
                 opts.colSubtotalDisplay.collapseAt = opts.collapseColsAt;
             }
-            var colAttrs = pivotData.colAttrs;
-            var rowAttrs = pivotData.rowAttrs;
-            var rowKeys = pivotData.getRowKeys();
-            var colKeys = pivotData.getColKeys();
-            var tree = pivotData.tree;
-            var rowTotals = pivotData.rowTotals;
-            var colTotals = pivotData.colTotals;
-            var allTotal = pivotData.allTotal;
-            var classRowHide = "rowhide";
-            var classRowShow = "rowshow";
-            var classColHide = "colhide";
-            var classColShow = "colshow";
-            var clickStatusExpanded = "expanded";
-            var clickStatusCollapsed = "collapsed";
-            var classExpanded = "expanded";
-            var classCollapsed = "collapsed";
-            var classRowExpanded = "rowexpanded";
-            var classRowCollapsed = "rowcollapsed";
-            var classColExpanded = "colexpanded";
-            var classColCollapsed = "colcollapsed";
-            var arrowExpanded = opts.arrowExpanded;
-            var arrowCollapsed = opts.arrowCollapsed;
-            var sizesInitialized = false;
+            colAttrs = pivotData.colAttrs;
+            rowAttrs = pivotData.rowAttrs;
+            rowKeys = pivotData.getRowKeys();
+            colKeys = pivotData.getColKeys();
+            tree = pivotData.tree;
+            rowTotals = pivotData.rowTotals;
+            colTotals = pivotData.colTotals;
+            allTotal = pivotData.allTotal;
+            arrowExpanded = opts.arrowExpanded;
+            arrowCollapsed = opts.arrowCollapsed;
+
+            var extensionNames = [];
+            var extensions = [];
+
+            this.addExtension = function(extensionName, extension, selector, events) {
+                if (typeof extension === UltraPivotExtension && !(extensionNames.indexOf(extensionName) >= 0)) {
+                    extensionNames.push(extensionName);
+                    extensions.push(extension);
+                    $(result).find(selector).on(events, function (e) {
+                        setTimeout(function () {
+                            try {
+                                extension.on(e);
+                            }
+                            catch (error) {
+                                // Remove the extension in case it causes any problem and notify the extension for the same
+                                var extIdx = extensionNames.indexOf(extensionName);
+                                if (extIdx > -1) {
+                                    extensions.splice(extIdx, 1);
+                                    extensionNames.splice(extIdx, 1);
+                                    extension.removed(error);
+                                }
+                            }
+                        }, 0);
+                    });
+
+                    // Notify the extension that it is added successfully
+                    extension.added(opts);
+                }
+            };
+
+            this.getTableElement = function () {
+                return result ? result : main(rowAttrs, rowKeys, colAttrs, colKeys);
+            };
+            this.getRowKeys = function () {
+                return rowKeys;
+            };
+            this.getColKeys = function () {
+                return colKeys;
+            };
+            this.getRowAttrs = function () {
+                return rowAttrs;
+            };
+            this.getColAttrs = function () {
+                return colAttrs;
+            };
+            this.getRowTotals = function () {
+                return rowTotals;
+            };
+            this.getColTotals = function () {
+                return colTotals;
+            };
+            this.getGrandTotals = function () {
+                return colTotals;
+            };
+            this.isTotalsRow = function (rowIdx) {
+                return colTotals;
+            };
+            this.isTotalsCol = function (colIdx) {
+                return colTotals;
+            };
+            this.isTotalsCell = function (rowIdx, colIdx) {
+                return colTotals;
+            };
+
             var hasClass = function(element, className) {
                 var regExp;
                 regExp = new RegExp("(?:^|\\s)" + className + "(?!\\S)", "g");
@@ -966,6 +1044,7 @@
                 return results;
             };
 
+            /** Adjusting sizes */
             var setFont = function($element, font, force, defaultFont) {
                 if (defaultFont.fontStyle !== font.fontStyle) {
                     $element.css('fontStyle', font.fontStyle);
@@ -980,7 +1059,20 @@
                     $element.css('fontSize', font.fontSize);
                 }
             };
+            var applyFonts = function(fontOptions) {
+                // Font to column header and axis will be same
+                setFont($(axisTable).find('th'), fontOptions.colHeaderFont, false, defaults.fontOptions.colHeaderFont);
+                setFont($(colHeaderTable).find('th'), fontOptions.colHeaderFont, false, defaults.fontOptions.colHeaderFont);
 
+                // row header will have its own font
+                setFont($(rowHeaderTable).find('th'), fontOptions.rowHeaderFont, false, defaults.fontOptions.rowHeaderFont);
+
+                // data will have its own font
+                setFont($(dataTable).find('td'), fontOptions.dataFont, false, defaults.fontOptions.dataFont);
+            };
+            var getSizeForN = function (n, unit) {
+                return (n * unit) + (n - 1);
+            };
             var setSizes = function(fontOptions) {
                 if (sizesInitialized) return;
                 sizesInitialized = true;
@@ -1063,18 +1155,7 @@
                 applyFonts(fontOptions);
             };
 
-            var applyFonts = function(fontOptions) {
-                // Font to column header and axis will be same
-                setFont($(axisTable).find('th'), fontOptions.colHeaderFont, false, defaults.fontOptions.colHeaderFont);
-                setFont($(colHeaderTable).find('th'), fontOptions.colHeaderFont, false, defaults.fontOptions.colHeaderFont);
-
-                // row header will have its own font
-                setFont($(rowHeaderTable).find('th'), fontOptions.rowHeaderFont, false, defaults.fontOptions.rowHeaderFont);
-
-                // data will have its own font
-                setFont($(dataTable).find('td'), fontOptions.dataFont, false, defaults.fontOptions.dataFont);
-            };
-
+            /** Scrolling */
             var initScrolls = function() {
                 var dataScroller, rowScroller, colScroller, coord = {x: 0, y: 0};
 
@@ -1139,7 +1220,6 @@
                         onScroll: onColScroll
                     }, 'hidden');
             };
-
             var createScroller = function($content, overflowBehavior, callbacks, visibility) {
                 return OverlayScrollbars($content, {
                     className: opts.theme.indexOf('dark') > 0 ? 'os-theme-thin-light' : 'os-theme-thin-dark',
@@ -1161,7 +1241,11 @@
                     callbacks: callbacks
                 });
             };
+            var onTableScroll = function(scroll) {
+                // console.log(scroll.x, scroll.y);
+            };
 
+            /** First Render */
             var initTables = function() {
                 var $outerContainer = $('<div style="width: 100%; height: 100%;">\
                             <div class="pvtTableInnerContainer" style="width: 100%; height: 100%; display: none; flex-direction: row;">\
@@ -1191,15 +1275,6 @@
                 colHeaderTable = $outerContainer.find('.colHeaderTable')[0];
                 dataTable = $outerContainer.find('.dataTable')[0];
             };
-
-            var getSizeForN = function (n, unit) {
-                return (n * unit) + (n - 1);
-            };
-
-            var onTableScroll = function(scroll) {
-                // console.log(scroll.x, scroll.y);
-            };
-
             var render = function(rowAttrs, rowKeys, colAttrs, colKeys) {
                 var chKey, colAttrHeaders, colAxisHeaders, colKeyHeaders, k, l, len, len1, node, ref, ref1, rowAttrHeaders, rowAxisHeaders, rowKeyHeaders, tr;
                 rowAttrHeaders = [];
@@ -1261,29 +1336,27 @@
                 }, 0);
                 return result;
             };
-
             var main = function(rowAttrs, rowKeys, colAttrs, colKeys) {
                 initTables();
                 return render(rowAttrs, rowKeys, colAttrs, colKeys);
             };
-
-            return main(rowAttrs, rowKeys, colAttrs, colKeys);
         };
+
         $.pivotUtilities.subtotal_renderers = {
             "Table With Subtotal": function(pvtData, opts) {
-                return SubtotalRenderer(pvtData, opts);
+                return Renderer(pvtData, opts);
             },
             "Table With Subtotal Bar Chart": function(pvtData, opts) {
-                return $(SubtotalRenderer(pvtData, opts)).barchart();
+                return $(Renderer(pvtData, opts)).barchart();
             },
             "Table With Subtotal Heatmap": function(pvtData, opts) {
-                return $(SubtotalRenderer(pvtData, opts)).heatmap("heatmap", opts);
+                return $(Renderer(pvtData, opts)).heatmap("heatmap", opts);
             },
             "Table With Subtotal Row Heatmap": function(pvtData, opts) {
-                return $(SubtotalRenderer(pvtData, opts)).heatmap("rowheatmap", opts);
+                return $(Renderer(pvtData, opts)).heatmap("rowheatmap", opts);
             },
             "Table With Subtotal Col Heatmap": function(pvtData, opts) {
-                return $(SubtotalRenderer(pvtData, opts)).heatmap("colheatmap", opts);
+                return $(Renderer(pvtData, opts)).heatmap("colheatmap", opts);
             }
         };
     });
