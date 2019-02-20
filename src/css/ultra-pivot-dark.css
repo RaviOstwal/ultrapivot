@@ -27,8 +27,14 @@
     background: #000;
 }
 
-.ultra-pivot-dark table.pvtTable tr {
+.ultra-pivot-dark table.pvtTable.rowHeaderTable tr,
+.ultra-pivot-dark table.pvtTable.axisTable tr,
+.ultra-pivot-dark table.pvtTable.dataTable tr {
     border-bottom: 1px solid #333;
+}
+
+.ultra-pivot-dark table.pvtTable.colHeaderTable tr {
+    border-bottom: 1px solid #555;
 }
 
 .ultra-pivot-dark table.pvtTable .pvtColLabel,

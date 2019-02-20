@@ -14,9 +14,14 @@
 
     callWithJQuery(function($) {
 
-        var Renderer = function(pivotData, opts) {
-            var ultraPivotRenderer = new UltraPivotRenderer(pivotData, opts);
-            return ultraPivotRenderer.getTableElement();
+        $.fn.ultraPivot = function (input, inputOpts, locale) {
+            var ultraRenderer = inputOpts.renderer;
+            inputOpts.renderer = function (pvtData, opts) {
+                ultraRenderer = ultraRenderer(pvtData, opts);
+                return ultraRenderer.getTableElement();
+            };
+            this.pivot(input, inputOpts, locale);
+            return ultraRenderer;
         };
 
         // An interface to create additional extensions over the core features
@@ -26,7 +31,7 @@
             this.removed = function (error) {};
         };
 
-        var UltraPivotRenderer = function(pivotData, options) {
+        function UltraPivotRenderer(pivotData, options) {
             var result, axisTable, colHeaderTable, rowHeaderTable, dataTable;
             var defaults = {
                 table: {
@@ -170,17 +175,8 @@
             this.getColTotals = function () {
                 return colTotals;
             };
-            this.getGrandTotals = function () {
-                return colTotals;
-            };
-            this.isTotalsRow = function (rowIdx) {
-                return colTotals;
-            };
-            this.isTotalsCol = function (colIdx) {
-                return colTotals;
-            };
-            this.isTotalsCell = function (rowIdx, colIdx) {
-                return colTotals;
+            this.getGrandTotal = function () {
+                return allTotal;
             };
 
             var hasClass = function(element, className) {
@@ -1340,25 +1336,32 @@
                 initTables();
                 return render(rowAttrs, rowKeys, colAttrs, colKeys);
             };
-        };
+        }
 
         $.pivotUtilities.subtotal_renderers = {
             "Table With Subtotal": function(pvtData, opts) {
-                return Renderer(pvtData, opts);
+                return new UltraPivotRenderer(pvtData, opts);
             },
             "Table With Subtotal Bar Chart": function(pvtData, opts) {
-                return $(Renderer(pvtData, opts)).barchart();
+                var renderer = new UltraPivotRenderer(pvtData, opts);
+                $(renderer.getTableElement()).barchart();
+                return renderer;
             },
             "Table With Subtotal Heatmap": function(pvtData, opts) {
-                return $(Renderer(pvtData, opts)).heatmap("heatmap", opts);
+                var renderer = new UltraPivotRenderer(pvtData, opts);
+                $(renderer.getTableElement()).heatmap("heatmap", opts);
+                return renderer;
             },
             "Table With Subtotal Row Heatmap": function(pvtData, opts) {
-                return $(Renderer(pvtData, opts)).heatmap("rowheatmap", opts);
+                var renderer = new UltraPivotRenderer(pvtData, opts);
+                $(renderer.getTableElement()).heatmap("rowheatmap", opts);
+                return renderer;
             },
             "Table With Subtotal Col Heatmap": function(pvtData, opts) {
-                return $(Renderer(pvtData, opts)).heatmap("colheatmap", opts);
+                var renderer = new UltraPivotRenderer(pvtData, opts);
+                $(renderer.getTableElement()).heatmap("colheatmap", opts);
+                return renderer;
             }
         };
     });
-
 }).call(this);

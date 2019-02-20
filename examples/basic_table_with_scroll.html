@@ -9,6 +9,7 @@
 <!-- PivotTable.js libs from ../dist -->
 <link rel="stylesheet" type="text/css" href="../src/css/ultrapivot.css">
 <link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-dark.css">
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-ultra-light.css">
 
 <script type="text/javascript" src="../libs/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../libs/js/jquery.overlayScrollbars.js"></script>
@@ -30,14 +31,17 @@
     let renderer = utils.subtotal_renderers["Table With Subtotal"];
 
     $.getJSON( "sample_data.json", function( data ) {
-        $("#ultraPivotTable").pivot(
+        $("#ultraPivotTable").ultraPivot(
             data,
             {
                 rows: ["Sales Channel", "Order Priority", "Item Type"],
                 cols: ["Region", "Country"],
                 aggregator: sum(["Total Profit"]),
                 dataClass: dataClass,
-                renderer: renderer
+                renderer: renderer,
+                rendererOptions: {
+                    theme: 'ultra-pivot-ultra-light'
+                }
             }
         );
     });

@@ -27,12 +27,18 @@
     background: #e3e3e3;
 }
 
-.ultra-pivot-ultra-light table.pvtTable tr {
+.ultra-pivot-ultra-light table.pvtTable.rowHeaderTable tr,
+.ultra-pivot-ultra-light table.pvtTable.axisTable tr,
+.ultra-pivot-ultra-light table.pvtTable.dataTable tr {
     border-bottom: 1px solid #757575;
 }
 
+.ultra-pivot-ultra-light table.pvtTable.colHeaderTable tr {
+    border-bottom: 1px solid #f5f7f7;
+}
+
 .ultra-pivot-ultra-light table.pvtTable .pvtColLabel,
-.ultra-pivot-dark table.pvtTable .pvtTotalLabel.rowTotal,
+.ultra-pivot-ultra-light table.pvtTable .pvtTotalLabel.rowTotal,
 .ultra-pivot-ultra-light table.pvtTable .pvtColLabelFiller {
     border-left: 1px solid #757575;
     border-right: 1px solid #757575;
