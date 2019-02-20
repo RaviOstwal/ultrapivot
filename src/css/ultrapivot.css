@@ -1,4 +1,4 @@
-table.pvtTable thead, table.pvtTable th, table.pvtTable tr, table.pvtTable td {
+table.ultraPivot thead, table.ultraPivot th, table.ultraPivot tr, table.ultraPivot td {
     font-size: 10px;
 }
 
@@ -10,40 +10,40 @@ table.pvtTableContainer > tr, table.pvtTableContainer > tr > td {
     padding: 0 !important;
 }
 
-table.pvtTable {
+table.ultraPivot {
     text-align: left;
     border-collapse: collapse;
     border-spacing: 0 !important;
 }
 
-table.pvtTable .pvtTotalLabel, table.pvtTable .pvtColSubtotal, table.pvtTable .pvtRowSubtotal,
-table.pvtTable .rowTotal, table.pvtTable .colTotal {
+table.ultraPivot .pvtTotalLabel, table.ultraPivot .pvtColSubtotal, table.ultraPivot .pvtRowSubtotal,
+table.ultraPivot .rowTotal, table.ultraPivot .colTotal {
     font-weight: bold;
 }
 
-table.pvtTable th, table.pvtTable td {
+table.ultraPivot th, table.ultraPivot td {
     padding: 5px !important;
 }
 
-table.pvtTable tr {
+table.ultraPivot tr {
     padding: 0 !important;
 }
 
-table.pvtTable .pvtRowLabel, table.pvtTable .pvtColLabel, table.pvtTable td {
+table.ultraPivot .pvtRowLabel, table.ultraPivot .pvtColLabel, table.ultraPivot td {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-table.pvtTable .pvtRowLabel, table.pvtTable .pvtRowLabelFiller {
+table.ultraPivot .pvtRowLabel, table.ultraPivot .pvtRowLabelFiller {
     vertical-align: top;
 }
 
-table.pvtTable .pvtColLabel, table.pvtTable .pvtColLabelFiller {
+table.ultraPivot .pvtColLabel, table.ultraPivot .pvtColLabelFiller {
     text-align: left;
 }
 
-table.pvtTable td {
+table.ultraPivot td {
     text-align: center;
 }
 
@@ -126,7 +126,7 @@ table.pvtTable td {
 
 .pvtRendererArea { padding: 5px;}
 
-table.pvtTable .pvtAxisLabel {
+table.ultraPivot .pvtAxisLabel {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
@@ -140,11 +140,11 @@ table.pvtTable .pvtAxisLabel {
 * IMPORTANT: Please do not remove the lines below this point
 *
 */
-table.pvtTable tr .rowhide {
+table.ultraPivot tr .rowhide {
     display: none;
 }
 
-table.pvtTable tr .colhide {
+table.ultraPivot tr .colhide {
     display: none;
 }
 

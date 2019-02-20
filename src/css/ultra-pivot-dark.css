@@ -1,9 +1,9 @@
-.ultra-pivot-dark table.pvtTable {
+.ultra-pivot-dark table.ultraPivot {
     color: #fff;
 }
 
 /* full tables background*/
-.ultra-pivot-dark table.pvtTable {
+.ultra-pivot-dark table.ultraPivot {
     background: #555;
 }
 
@@ -12,38 +12,38 @@
 .ultra-pivot-dark table.dataTable tr:nth-child(even) {background: #999 !important;}
 
 /* subtotals background*/
-.ultra-pivot-dark table.pvtTable .rowTotal,
-.ultra-pivot-dark table.pvtTable .colTotal,
-.ultra-pivot-dark table.pvtTable .pvtTotalLabel,
-.ultra-pivot-dark table.pvtTable .pvtColSubtotal,
-.ultra-pivot-dark table.pvtTable .pvtRowSubtotal,
-.ultra-pivot-dark table.pvtTable .pvtRowLabelFiller,
-.ultra-pivot-dark table.pvtTable .pvtColLabelFiller {
+.ultra-pivot-dark table.ultraPivot .rowTotal,
+.ultra-pivot-dark table.ultraPivot .colTotal,
+.ultra-pivot-dark table.ultraPivot .pvtTotalLabel,
+.ultra-pivot-dark table.ultraPivot .pvtColSubtotal,
+.ultra-pivot-dark table.ultraPivot .pvtRowSubtotal,
+.ultra-pivot-dark table.ultraPivot .pvtRowLabelFiller,
+.ultra-pivot-dark table.ultraPivot .pvtColLabelFiller {
     background: #444;
 }
 
 /* grand total background*/
-.ultra-pivot-dark table.pvtTable .pvtGrandTotal {
+.ultra-pivot-dark table.ultraPivot .pvtGrandTotal {
     background: #000;
 }
 
-.ultra-pivot-dark table.pvtTable.rowHeaderTable tr,
-.ultra-pivot-dark table.pvtTable.axisTable tr,
-.ultra-pivot-dark table.pvtTable.dataTable tr {
+.ultra-pivot-dark table.ultraPivot.rowHeaderTable tr,
+.ultra-pivot-dark table.ultraPivot.axisTable tr,
+.ultra-pivot-dark table.ultraPivot.dataTable tr {
     border-bottom: 1px solid #333;
 }
 
-.ultra-pivot-dark table.pvtTable.colHeaderTable tr {
+.ultra-pivot-dark table.ultraPivot.colHeaderTable tr {
     border-bottom: 1px solid #555;
 }
 
-.ultra-pivot-dark table.pvtTable .pvtColLabel,
-.ultra-pivot-dark table.pvtTable .pvtTotalLabel.rowTotal,
-.ultra-pivot-dark table.pvtTable .pvtColLabelFiller {
+.ultra-pivot-dark table.ultraPivot .pvtColLabel,
+.ultra-pivot-dark table.ultraPivot .pvtTotalLabel.rowTotal,
+.ultra-pivot-dark table.ultraPivot .pvtColLabelFiller {
     border-left: 1px solid #333;
     border-right: 1px solid #333;
 }
 
-.ultra-pivot-dark table.pvtTable td {
+.ultra-pivot-dark table.ultraPivot td {
     border-left: 1px solid #333;
 }

@@ -12,15 +12,15 @@
     };
 
     callWithJQuery(function($) {
-        var aggregatorTemplates, subtotalAggregatorTemplates, usFmtPct;
+        $.ultraPivotUtils = $.pivotUtilities;
 
-        usFmtPct = $.pivotUtilities.numberFormat({
+        var usFmtPct = $.ultraPivotUtils.numberFormat({
             digitsAfterDecimal: 1,
             scaler: 100,
             suffix: "%"
         });
-        aggregatorTemplates = $.pivotUtilities.aggregatorTemplates;
-        subtotalAggregatorTemplates = {
+        var aggregatorTemplates = $.ultraPivotUtils.aggregatorTemplates;
+        var subtotalAggregatorTemplates = {
             fractionOf: function(wrapped, type, formatter) {
                 if (type == null) {
                     type = "row";
@@ -57,15 +57,13 @@
                 };
             }
         };
-        $.pivotUtilities.subtotalAggregatorTemplates = subtotalAggregatorTemplates;
-        return $.pivotUtilities.subtotal_aggregators = (function(tpl, sTpl) {
-            return {
-                "Sum As Fraction Of Parent Row": sTpl.fractionOf(tpl.sum(), "row", usFmtPct),
-                "Sum As Fraction Of Parent Column": sTpl.fractionOf(tpl.sum(), "col", usFmtPct),
-                "Count As Fraction Of Parent Row": sTpl.fractionOf(tpl.count(), "row", usFmtPct),
-                "Count As Fraction Of Parent Column": sTpl.fractionOf(tpl.count(), "col", usFmtPct)
-            };
-        })(aggregatorTemplates, subtotalAggregatorTemplates);
+        $.ultraPivotUtils.subtotalAggregatorTemplates = subtotalAggregatorTemplates;
+        $.ultraPivotUtils.subtotal_aggregators = {
+            "Sum As Fraction Of Parent Row": subtotalAggregatorTemplates.fractionOf(aggregatorTemplates.sum(), "row", usFmtPct),
+            "Sum As Fraction Of Parent Column": subtotalAggregatorTemplates.fractionOf(aggregatorTemplates.sum(), "col", usFmtPct),
+            "Count As Fraction Of Parent Row": subtotalAggregatorTemplates.fractionOf(aggregatorTemplates.count(), "row", usFmtPct),
+            "Count As Fraction Of Parent Column": subtotalAggregatorTemplates.fractionOf(aggregatorTemplates.count(), "col", usFmtPct)
+        };
     });
 
 }).call(this);

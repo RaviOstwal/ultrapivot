@@ -14,9 +14,7 @@
     };
 
     callWithJQuery(function($) {
-
-        var SubtotalPivotData;
-        SubtotalPivotData = (function(superClass) {
+        $.pivotUtilities.UltraPivotData =  (function(superClass) {
             var processKey;
 
             extend(SubtotalPivotData, superClass);
@@ -89,8 +87,7 @@
 
             return SubtotalPivotData;
 
-        })($.pivotUtilities.PivotData);
-        $.pivotUtilities.SubtotalPivotData = SubtotalPivotData;
+        })($.ultraPivotUtils.PivotData);
     });
 
 }).call(this);

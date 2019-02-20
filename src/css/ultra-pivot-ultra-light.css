@@ -1,9 +1,9 @@
-.ultra-pivot-ultra-light table.pvtTable {
+.ultra-pivot-ultra-light table.ultraPivot {
     color: #616161;
 }
 
 /* full tables background*/
-.ultra-pivot-ultra-light table.pvtTable {
+.ultra-pivot-ultra-light table.ultraPivot {
     background: #f5f7f7;
 }
 
@@ -12,38 +12,38 @@
 .ultra-pivot-ultra-light table.dataTable tr:nth-child(even) {background: #fcfdfe !important;}
 
 /* subtotals background*/
-.ultra-pivot-ultra-light table.pvtTable .rowTotal,
-.ultra-pivot-ultra-light table.pvtTable .colTotal,
-.ultra-pivot-ultra-light table.pvtTable .pvtTotalLabel,
-.ultra-pivot-ultra-light table.pvtTable .pvtColSubtotal,
-.ultra-pivot-ultra-light table.pvtTable .pvtRowSubtotal,
-.ultra-pivot-ultra-light table.pvtTable .pvtRowLabelFiller,
-.ultra-pivot-ultra-light table.pvtTable .pvtColLabelFiller {
+.ultra-pivot-ultra-light table.ultraPivot .rowTotal,
+.ultra-pivot-ultra-light table.ultraPivot .colTotal,
+.ultra-pivot-ultra-light table.ultraPivot .pvtTotalLabel,
+.ultra-pivot-ultra-light table.ultraPivot .pvtColSubtotal,
+.ultra-pivot-ultra-light table.ultraPivot .pvtRowSubtotal,
+.ultra-pivot-ultra-light table.ultraPivot .pvtRowLabelFiller,
+.ultra-pivot-ultra-light table.ultraPivot .pvtColLabelFiller {
     background: #f3f3f3;
 }
 
 /* grand total background*/
-.ultra-pivot-ultra-light table.pvtTable .pvtGrandTotal {
+.ultra-pivot-ultra-light table.ultraPivot .pvtGrandTotal {
     background: #e3e3e3;
 }
 
-.ultra-pivot-ultra-light table.pvtTable.rowHeaderTable tr,
-.ultra-pivot-ultra-light table.pvtTable.axisTable tr,
-.ultra-pivot-ultra-light table.pvtTable.dataTable tr {
+.ultra-pivot-ultra-light table.ultraPivot.rowHeaderTable tr,
+.ultra-pivot-ultra-light table.ultraPivot.axisTable tr,
+.ultra-pivot-ultra-light table.ultraPivot.dataTable tr {
     border-bottom: 1px solid #757575;
 }
 
-.ultra-pivot-ultra-light table.pvtTable.colHeaderTable tr {
+.ultra-pivot-ultra-light table.ultraPivot.colHeaderTable tr {
     border-bottom: 1px solid #f5f7f7;
 }
 
-.ultra-pivot-ultra-light table.pvtTable .pvtColLabel,
-.ultra-pivot-ultra-light table.pvtTable .pvtTotalLabel.rowTotal,
-.ultra-pivot-ultra-light table.pvtTable .pvtColLabelFiller {
+.ultra-pivot-ultra-light table.ultraPivot .pvtColLabel,
+.ultra-pivot-ultra-light table.ultraPivot .pvtTotalLabel.rowTotal,
+.ultra-pivot-ultra-light table.ultraPivot .pvtColLabelFiller {
     border-left: 1px solid #757575;
     border-right: 1px solid #757575;
 }
 
-.ultra-pivot-ultra-light table.pvtTable td {
+.ultra-pivot-ultra-light table.ultraPivot td {
     border-left: 1px solid #757575;
 }

@@ -1,6 +1,7 @@
 (function() {
     var callWithJQuery,
-        hasProp = {}.hasOwnProperty,
+        extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+        hasProp = {}.hasOwnProperty, slice = [].slice;
 
     callWithJQuery = function(pivotModule) {
         if (typeof exports === "object" && typeof module === "object") {
@@ -25,10 +26,20 @@
         };
 
         // An interface to create additional extensions over the core features
-        var UltraPivotExtension = function () {
-            this.added = function (options) {};
-            this.on = function (event) {};
-            this.removed = function (error) {};
+        $.ultraPivotUtils.UltraPivotExtension = function () {
+            this.selector = '.ultraPivot';
+            this.events = 'click';
+            this.capability = 'highlighting';
+            this.enabled = function (options, renderer) {};
+            this.onEvent = function (event) {};
+            this.disabled = function (error) {};
+        };
+
+        $.ultraPivotUtils.extensions = {};
+        $.ultraPivotUtils.registerExtension = function(extensionName, extension) {
+            if (typeof extension === $.ultraPivotUtils.UltraPivotExtension && !$.ultraPivotUtils.extensions[extensionName]) {
+                $.ultraPivotUtils.extensions[extensionName] = extension;
+            }
         };
 
         function UltraPivotRenderer(pivotData, options) {
@@ -79,7 +90,8 @@
                 },
                 theme: 'ultra-pivot-dark'
             };
-            var opts, colAttrs, rowAttrs, rowKeys, colKeys, tree, rowTotals, colTotals, allTotal, arrowExpanded, arrowCollapsed;
+            var opts, colAttrs, rowAttrs, rowKeys, colKeys, tree, rowTotals, colTotals, allTotal, arrowExpanded, arrowCollapsed,
+                capabilities, capabilityHandlers = {};
 
             var classRowHide = "rowhide";
             var classRowShow = "rowshow";
@@ -124,34 +136,38 @@
             allTotal = pivotData.allTotal;
             arrowExpanded = opts.arrowExpanded;
             arrowCollapsed = opts.arrowCollapsed;
+            capabilities = opts.capabilities ? opts.capabilities : [];
 
-            var extensionNames = [];
-            var extensions = [];
+            capabilities.forEach(function (capability) {
+                var extension = $.ultraPivotUtils.extensions[capability];
+                if (extension) enableCapability(extension);
+            });
 
-            this.addExtension = function(extensionName, extension, selector, events) {
-                if (typeof extension === UltraPivotExtension && !(extensionNames.indexOf(extensionName) >= 0)) {
-                    extensionNames.push(extensionName);
-                    extensions.push(extension);
-                    $(result).find(selector).on(events, function (e) {
-                        setTimeout(function () {
-                            try {
-                                extension.on(e);
-                            }
-                            catch (error) {
-                                // Remove the extension in case it causes any problem and notify the extension for the same
-                                var extIdx = extensionNames.indexOf(extensionName);
-                                if (extIdx > -1) {
-                                    extensions.splice(extIdx, 1);
-                                    extensionNames.splice(extIdx, 1);
-                                    extension.removed(error);
-                                }
-                            }
-                        }, 0);
-                    });
+            var enableCapability = function(extension) {
+                var extInstance = new extension();
+                var handler = function (e) {
+                    setTimeout(function () {
+                        try {
+                            extInstance.onEvent(e);
+                        }
+                        catch (error) {
+                            // Remove the extension in case it causes any problem and notify the extension for the same
+                            extInstance.error(error);
+                            disableCapability(extInstance);
+                        }
+                    }, 0);
+                };
 
-                    // Notify the extension that it is added successfully
-                    extension.added(opts);
-                }
+                capabilityHandlers[extInstance.capability] = handler;
+                $(result).find(extInstance.selector).on(extInstance.events, handler);
+                // Notify the extension that it is added successfully
+                extension.enabled(opts, this);
+            };
+
+            var disableCapability = function(extInstance) {
+                var handler = capabilityHandlers[extension.capability];
+                $(result).find(extInstance.selector).off(extInstance.events, handler);
+                delete capabilityHandlers[extInstance.capability];
             };
 
             this.getTableElement = function () {
@@ -1247,18 +1263,18 @@
                             <div class="pvtTableInnerContainer" style="width: 100%; height: 100%; display: none; flex-direction: row;">\
                                 <div class="c1" style="width: 120px; height: 100%;">\
                                     <div class="c1r1" style="width: 100%; height: 120px;">\
-                                            <table class="pvtTable axisTable" style="width: 100%; height: 120px"></table>\
+                                            <table class="ultraPivot axisTable" style="width: 100%; height: 120px"></table>\
                                     </div>\
                                     <div class="c1r2" style="width: 100%; height: calc(100% - 120px); overflow: hidden;">\
-                                            <table class="pvtTable rowHeaderTable" style="width: 100%;"></table>\
+                                            <table class="ultraPivot rowHeaderTable" style="width: 100%;"></table>\
                                     </div>\
                                 </div>\
                                 <div class="c2" style="width: calc(100% - 120px); height: 100%;">\
                                     <div class="c2r1" style="width: 100%; height: 120px; overflow: hidden;">\
-                                        <table class="pvtTable colHeaderTable" style="height: 100%"></table>\
+                                        <table class="ultraPivot colHeaderTable" style="height: 100%"></table>\
                                     </div>\
                                     <div class="c2r2" style="width: 100%; height: calc(100% - 120px); overflow: auto;">\
-                                        <table class="pvtTable dataTable"></table>\
+                                        <table class="ultraPivot dataTable"></table>\
                                     </div>\
                                 </div>\
                             </div>\
@@ -1338,7 +1354,7 @@
             };
         }
 
-        $.pivotUtilities.subtotal_renderers = {
+        $.ultraPivotUtils.subtotal_renderers = {
             "Table With Subtotal": function(pvtData, opts) {
                 return new UltraPivotRenderer(pvtData, opts);
             },

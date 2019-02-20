@@ -17,17 +17,17 @@
 <link rel="stylesheet" type="text/css" href="../libs/css/os-theme-thin-light.css">
 
 <script src="../libs/js/pivot.js"></script>
-<script src="../src/js/dataprocessor.js"></script>
 <script src="../src/js/aggregators.js"></script>
+<script src="../src/js/dataprocessor.js"></script>
 <script src="../src/js/renderers.js"></script>
 
 <div id="ultraPivot1"></div>
 <div id="ultraPivot2"></div>
 
 <script type="text/javascript" >
-    let utils = $.pivotUtilities;
+    let utils = $.ultraPivotUtils;
     let sum =  utils.aggregators["Sum"];
-    let dataClass = utils.SubtotalPivotData;
+    let dataClass = utils.UltraPivotData;
     let renderer = utils.subtotal_renderers["Table With Subtotal"];
 
     $("#ultraPivot1").ultraPivot(
