@@ -2,15 +2,15 @@
     var callWithJQuery,
         hasProp = {}.hasOwnProperty,
 
-    callWithJQuery = function(pivotModule) {
-        if (typeof exports === "object" && typeof module === "object") {
-            return pivotModule(require("jquery"));
-        } else if (typeof define === "function" && define.amd) {
-            return define(["jquery"], pivotModule);
-        } else {
-            return pivotModule(jQuery);
-        }
-    };
+        callWithJQuery = function(pivotModule) {
+            if (typeof exports === "object" && typeof module === "object") {
+                return pivotModule(require("jquery"));
+            } else if (typeof define === "function" && define.amd) {
+                return define(["jquery"], pivotModule);
+            } else {
+                return pivotModule(jQuery);
+            }
+        };
 
     callWithJQuery(function($) {
 
@@ -61,7 +61,11 @@
                         fontSize: 10
                     }
                 },
-                theme: 'ultra-pivot-dark'
+                theme: 'ultra-pivot-dark',
+                virtualScroll: {
+                    enable: true,
+                    maxNoOfElements: 100000
+                }
             };
             opts = $.extend(true, {}, defaults, opts);
             if (opts.rowSubtotalDisplay.disableSubtotal) {
@@ -82,13 +86,31 @@
             if (typeof opts.colSubtotalDisplay.collapseAt !== 'undefined' && opts.collapseColsAt !== null) {
                 opts.colSubtotalDisplay.collapseAt = opts.collapseColsAt;
             }
-            var colAttrs = pivotData.colAttrs;
-            var rowAttrs = pivotData.rowAttrs;
-            var rowKeys = pivotData.getRowKeys();
-            var colKeys = pivotData.getColKeys();
+            var colAttributes = pivotData.colAttrs;
+            var rowAttributes = pivotData.rowAttrs;
+            var rowKeysList = pivotData.getRowKeys();
+            var colKeysList = pivotData.getColKeys();
             var tree = pivotData.tree;
             var rowTotals = pivotData.rowTotals;
             var colTotals = pivotData.colTotals;
+            var rowCount = (function (obj) {
+                var c = 0;
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        c++;
+                    }
+                }
+                return c;
+            })(rowTotals);
+            var colCount = (function (obj) {
+                var c = 0;
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        c++;
+                    }
+                }
+                return c;
+            })(colTotals);
             var allTotal = pivotData.allTotal;
             var classRowHide = "rowhide";
             var classRowShow = "rowshow";
@@ -104,7 +126,6 @@
             var classColCollapsed = "colcollapsed";
             var arrowExpanded = opts.arrowExpanded;
             var arrowCollapsed = opts.arrowCollapsed;
-            var sizesInitialized = false;
             var hasClass = function(element, className) {
                 var regExp;
                 regExp = new RegExp("(?:^|\\s)" + className + "(?!\\S)", "g");
@@ -966,6 +987,42 @@
                 return results;
             };
 
+            var sizesInitialized = false, fitRows, fitCols, unitSize, axisSize, containerBounds;
+
+            function setWidth($ele, width) {
+                //width = isNaN(width) ? width : (width + 'px');
+                $ele.css('width', width);
+                $ele.css('min-width', width);
+                $ele.css('max-width', width);
+            }
+
+            function setHeight($ele, height) {
+                //height = isNaN(height) ? height : (height + 'px');
+                $ele.css('height', height);
+                $ele.css('min-height', height);
+                $ele.css('max-height', height);
+            }
+
+            function getFontUnits(font, defaultFont) {
+                var test = $(createElement('div', 'pivot_test'));
+                test.css('position', 'absolute');
+                test.css('visibility', 'hidden');
+                test.css('height', 'auto');
+                test.css('width', 'auto');
+                test.css('white-space', 'nowrap');
+                $(result).append(test);
+
+                setFont(test, font, true, defaultFont);
+                test.text("◢ Ravi Ostwal Jain");
+
+                var height = Math.ceil(test.height());
+                var width = Math.ceil(test.width());
+
+                test.remove();
+
+                return { height: height, width: width};
+            }
+
             var setFont = function($element, font, force, defaultFont) {
                 if (defaultFont.fontStyle !== font.fontStyle) {
                     $element.css('fontStyle', font.fontStyle);
@@ -984,42 +1041,11 @@
             var setSizes = function(fontOptions) {
                 if (sizesInitialized) return;
                 sizesInitialized = true;
-                function setWidth($ele, width) {
-                    //width = isNaN(width) ? width : (width + 'px');
-                    $ele.css('width', width);
-                    $ele.css('min-width', width);
-                    $ele.css('max-width', width);
-                }
 
-                function setHeight($ele, height) {
-                    //height = isNaN(height) ? height : (height + 'px');
-                    $ele.css('height', height);
-                    $ele.css('min-height', height);
-                    $ele.css('max-height', height);
-                }
-
-                function getFontUnits(font, defaultFont) {
-                    var test = $(createElement('div', 'pivot_test'));
-                    test.css('position', 'absolute');
-                    test.css('visibility', 'hidden');
-                    test.css('height', 'auto');
-                    test.css('width', 'auto');
-                    test.css('white-space', 'nowrap');
-                    $(result).append(test);
-
-                    setFont(test, font, true, defaultFont);
-                    test.text("◢ Ravi Ostwal Jain");
-
-                    var height = Math.ceil(test.height());
-                    var width = Math.ceil(test.width());
-
-                    test.remove();
-
-                    return { height: height, width: width};
-                }
-
-                var totalWidth = $(result).width();
-                var totalHeight = $(result).height();
+                containerBounds = {
+                    height: $(result).height(),
+                    width: $(result).width()
+                };
 
                 var dataUnits = getFontUnits(fontOptions.dataFont, defaults.fontOptions.dataFont);
                 var rowUnits = getFontUnits(fontOptions.rowHeaderFont, defaults.fontOptions.rowHeaderFont);
@@ -1029,26 +1055,53 @@
                     height: Math.max(Math.max(rowUnits.height, dataUnits.height), columnUnits.height),
                     width: Math.max(Math.max(rowUnits.width, dataUnits.width), columnUnits.width)
                 };
-                var axisHeight = getSizeForN(colAttrs.length + 1, units.height + 10);
-                var axisWidth = getSizeForN(rowAttrs.length + 1, units.width + 10);
+                unitSize = {
+                    height: units.height + 10,
+                    width: units.width + 10
+                };
 
-                setWidth($(result).find('.c1'), axisWidth);
-                setWidth($(result).find('.c2'), totalWidth - axisWidth);
+                var axisHeight = getSizeForN(colAttributes.length + 1, unitSize.height);
+                var axisWidth = getSizeForN(unitSize.width, rowAttributes.length + 1);
+                axisSize = {height: axisHeight, width: axisWidth};
 
-                setHeight($(result).find('.c1r1'), axisHeight);
-                setHeight($(result).find('.c1r2'), totalHeight - axisHeight);
-                setHeight($(result).find('.c2r1'), axisHeight);
-                setHeight($(result).find('.c2r2'), totalHeight - axisHeight);
+                fitRows = Math.ceil((containerBounds.height - axisHeight) / unitSize.height);
+                fitCols = Math.ceil((containerBounds.width - axisWidth) / unitSize.width);
+
+                configSizes(fontOptions);
+            };
+
+            var configSizes = function(fontOptions) {
+                var units = {
+                    height: unitSize.height - 10,
+                    width: unitSize.width - 10
+                };
+                setWidth($(result).find('.c1'), axisSize.width);
+                setWidth($(result).find('.c2'), containerBounds.width - axisSize.width);
+
+                setHeight($(result).find('.c1r1'), axisSize.height);
+                setHeight($(result).find('.c1r2'), containerBounds.height - axisSize.height);
+                setHeight($(result).find('.c2r1'), axisSize.height);
+                setHeight($(result).find('.c2r2'), containerBounds.height - axisSize.height);
+
+                // set sizes to wrapper so that scroll will always have same view
+                setHeight($(result).find('.rowWrapper'), getSizeForN(rowCount + 1, unitSize.height));
+                setWidth($(result).find('.rowWrapper'), axisSize.width);
+
+                setWidth($(result).find('.colWrapper'), getSizeForN(colCount + 1, unitSize.width));
+                setHeight($(result).find('.colWrapper'), axisSize.height);
+
+                setHeight($(result).find('.dataWrapper'), getSizeForN(rowCount + 1, unitSize.height));
+                setWidth($(result).find('.dataWrapper'), getSizeForN(colCount + 1, unitSize.width));
 
                 // col header and axis will always have same height
-                setHeight($(colHeaderTable), axisHeight);
-                setHeight($(axisTable), axisHeight);
+                // setHeight($(colHeaderTable), axisSize.height);
+                setHeight($(axisTable), axisSize.height);
                 setHeight($(colHeaderTable).find('th'), units.height);
                 setHeight($(axisTable).find('th'), units.height);
 
                 // row header and axis will always have same width
-                setWidth($(rowHeaderTable), axisWidth);
-                setWidth($(axisTable), axisWidth);
+                // setWidth($(rowHeaderTable), axisSize.width);
+                setWidth($(axisTable), axisSize.width);
                 setWidth($(rowHeaderTable).find('th'), units.width);
                 setWidth($(axisTable).find('th'), units.width);
 
@@ -1108,7 +1161,7 @@
                 };
 
                 var onContentSizeChanged = function() {
-                    setSizes(opts.fontOptions);
+                    //setSizes(opts.fontOptions);
                 };
 
                 dataScroller = createScroller($(result).find('.c2r2'),
@@ -1143,7 +1196,7 @@
             var createScroller = function($content, overflowBehavior, callbacks, visibility) {
                 return OverlayScrollbars($content, {
                     className: opts.theme.indexOf('dark') > 0 ? 'os-theme-thin-light' : 'os-theme-thin-dark',
-                    autoUpdate: true,
+                    autoUpdate: false,
                     autoUpdateInterval: 500,
                     nativeScrollbarsOverlaid : {
                         showNativeScrollbars: false,
@@ -1153,7 +1206,7 @@
                     scrollbars: {
                         visibility: visibility,
                         autoHide: 'leave',
-                        autoHideDelay: 500,
+                        autoHideDelay: 800,
                         dragScrolling: true,
                         clickScrolling: false,
                         touchSupport: true
@@ -1162,6 +1215,9 @@
                 });
             };
 
+            var colBuffer = [0, 100], rowBuffer = [0, 100],
+                bufferSize = { c: rowCount, r: colCount};
+            var realTimeRendering = false;
             var initTables = function() {
                 var $outerContainer = $('<div style="width: 100%; height: 100%;">\
                             <div class="pvtTableInnerContainer" style="width: 100%; height: 100%; display: none; flex-direction: row;">\
@@ -1170,15 +1226,29 @@
                                             <table class="pvtTable axisTable" style="width: 100%; height: 120px"></table>\
                                     </div>\
                                     <div class="c1r2" style="width: 100%; height: calc(100% - 120px); overflow: hidden;">\
-                                            <table class="pvtTable rowHeaderTable" style="width: 100%;"></table>\
+                                            <div class="rowWrapper" style="overflow: hidden; height: fit-content;">\
+                                                <div class="rTop"></div>\
+                                                <table class="pvtTable rowHeaderTable" style="width: 100%;"></table>\
+                                                <div class="rBottom"></div>\
+                                            </div>\
                                     </div>\
                                 </div>\
                                 <div class="c2" style="width: calc(100% - 120px); height: 100%;">\
                                     <div class="c2r1" style="width: 100%; height: 120px; overflow: hidden;">\
-                                        <table class="pvtTable colHeaderTable" style="height: 100%"></table>\
+                                        <div class="colWrapper" style="overflow: hidden">\
+                                            <div style="display: flex; flex-direction: row; width: fit-content;">\
+                                                <div class="cLeft"></div><table class="pvtTable colHeaderTable" style="height: 100%"></table><div class="cRight"></div>\
+                                            </div>\
+                                        </div>\
                                     </div>\
                                     <div class="c2r2" style="width: 100%; height: calc(100% - 120px); overflow: auto;">\
-                                        <table class="pvtTable dataTable"></table>\
+                                        <div class="dataWrapper" style="overflow: hidden; height: fit-content;">\
+                                            <div class="rTop"></div>\
+                                            <div style="display: flex; flex-direction: row; width: fit-content;">\
+                                                <div class="cLeft"></div><table class="pvtTable dataTable"></table><div class="cRight"></div>\
+                                            </div>\
+                                            <div class="rBottom"></div>\
+                                        </div>\
                                     </div>\
                                 </div>\
                             </div>\
@@ -1190,14 +1260,94 @@
                 rowHeaderTable = $outerContainer.find('.rowHeaderTable')[0];
                 colHeaderTable = $outerContainer.find('.colHeaderTable')[0];
                 dataTable = $outerContainer.find('.dataTable')[0];
+
+                if ((rowCount * colCount) > opts.virtualScroll.maxNoOfElements) {
+                    var idealBufferSize = Math.round(Math.sqrt(opts.virtualScroll.maxNoOfElements));
+                    bufferSize.r = Math.min(rowCount, idealBufferSize);
+                    if (bufferSize.r < idealBufferSize)
+                        bufferSize.c = Math.round(opts.virtualScroll.maxNoOfElements / bufferSize.r);
+                    else
+                        bufferSize.c = Math.min(colCount, idealBufferSize);
+
+                    if (bufferSize.c < idealBufferSize)
+                        bufferSize.r = Math.round(opts.virtualScroll.maxNoOfElements / bufferSize.c);
+
+                    realTimeRendering = bufferSize.r !== rowCount || bufferSize.c !== colCount;
+                    rowBuffer = [0, bufferSize.r - 1];
+                    colBuffer = [0, bufferSize.c - 1];
+                }
             };
 
             var getSizeForN = function (n, unit) {
                 return (n * unit) + (n - 1);
             };
 
+            var resetView = function () {
+                var hTop = getSizeForN(rowBuffer[0], unitSize.height);
+                var hData = getSizeForN(rowBuffer[1] - rowBuffer[0], unitSize.height);
+                var hBottom = getSizeForN(rowCount - rowBuffer[1], unitSize.height);
+                console.log("Row: ", hTop, hData, hBottom);
+
+                var wLeft = getSizeForN(colBuffer[0], unitSize.width);
+                var wData = getSizeForN(colBuffer[1] - colBuffer[0], unitSize.width);
+                var wRight = getSizeForN(colCount - colBuffer[1], unitSize.width);
+                console.log("Col: ", wLeft, wData, wRight);
+
+                $(axisTable).empty();
+                $(rowHeaderTable).empty();
+                $(colHeaderTable).empty();
+                $(dataTable).empty();
+
+                $(result).find('.rTop').css('height', hTop);
+                $(result).find('.rBottom').css('height', hBottom);
+                $(result).find('.cLeft').css('width', wLeft);
+                $(result).find('.cRight').css('width', wRight);
+
+                $(result).find('.dataTable').css('height', hData);
+                $(result).find('.rowHeaderTable').css('height', hData);
+
+                $(result).find('.dataTable').css('width', wData);
+                $(result).find('.colHeaderTable').css('width', wData);
+            };
+
+            var scrollTimer, updateInProgress = false;
             var onTableScroll = function(scroll) {
-                // console.log(scroll.x, scroll.y);
+                if (!realTimeRendering) return;
+                if (scrollTimer) {
+                    clearTimeout(scrollTimer);
+                    scrollTimer = null;
+                }
+                scrollTimer = setTimeout(function () {
+                    scrollUpdate(scroll);
+                }, 100);
+            };
+
+            var scrollUpdate = function (scroll) {
+                if (updateInProgress) return;
+
+                updateInProgress = true;
+
+                var rStart, rEnd, cStart, cEnd, rBuff, cBuff;
+                if (scroll.x) {
+                    cStart = Math.floor(scroll.x.position / unitSize.width);
+                    cEnd = Math.ceil(cStart + fitCols);
+                    cBuff = [cStart, Math.min(cEnd, colCount - 1)];
+                }
+                if (scroll.y) {
+                    rStart = Math.floor(scroll.y.position / unitSize.height);
+                    rEnd = Math.ceil(rStart + fitRows);
+                    rBuff = [rStart, Math.min(rEnd, rowCount - 1)];
+                }
+                if (rStart < rowBuffer[0] || rEnd > rowBuffer[1]
+                    || cStart < colBuffer[0] || cEnd > colBuffer[1]) {
+                    rowBuffer = rBuff ? rBuff : rowBuffer;
+                    colBuffer = cBuff ? cBuff : colBuffer;
+                    resetView();
+                    render(rowAttributes, rowKeysList.slice(rStart, rEnd), colAttributes, colKeysList.slice(cStart, cEnd));
+                    configSizes(opts.fontOptions);
+                }
+
+                updateInProgress = false;
             };
 
             var render = function(rowAttrs, rowKeys, colAttrs, colKeys) {
@@ -1267,7 +1417,7 @@
                 return render(rowAttrs, rowKeys, colAttrs, colKeys);
             };
 
-            return main(rowAttrs, rowKeys, colAttrs, colKeys);
+            return main(rowAttributes, rowKeysList, colAttributes, colKeysList);
         };
         $.pivotUtilities.subtotal_renderers = {
             "Table With Subtotal": function(pvtData, opts) {
