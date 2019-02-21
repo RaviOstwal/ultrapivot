@@ -40,7 +40,13 @@
                 dataClass: dataClass,
                 renderer: renderer,
                 rendererOptions: {
-                    theme: 'ultra-pivot-ultra-light'
+                    theme: 'ultra-pivot-ultra-light',
+                    rowSubtotalDisplay: {
+                        disableExpandCollapse: true
+                    },
+                    colSubtotalDisplay: {
+                        disableExpandCollapse: true
+                    }
                 }
             }
         );

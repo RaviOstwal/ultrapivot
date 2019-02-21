@@ -27,9 +27,9 @@
 
         // An interface to create additional extensions over the core features
         $.ultraPivotUtils.UltraPivotExtension = function () {
-            this.selector = '.ultraPivot';
-            this.events = 'click';
-            this.capability = 'highlighting';
+            this.name = '';
+            this.events = '';
+            this.selector = '';
             this.enabled = function (options, renderer) {};
             this.onEvent = function (event) {};
             this.disabled = function (error) {};
@@ -37,12 +37,17 @@
 
         $.ultraPivotUtils.extensions = {};
         $.ultraPivotUtils.registerExtension = function(extensionName, extension) {
-            if (typeof extension === $.ultraPivotUtils.UltraPivotExtension && !$.ultraPivotUtils.extensions[extensionName]) {
-                $.ultraPivotUtils.extensions[extensionName] = extension;
+            if (typeof extension === "function" && !$.ultraPivotUtils.extensions[extensionName]) {
+                var test = new extension();
+                if (test.enabled && test.onEvent && test.disabled) {
+                    $.ultraPivotUtils.extensions[extensionName] = extension;
+                    console.log("Extension Registered : " + extensionName);
+                }
             }
         };
 
         function UltraPivotRenderer(pivotData, options) {
+            var instance = this;
             var result, axisTable, colHeaderTable, rowHeaderTable, dataTable;
             var defaults = {
                 table: {
@@ -88,10 +93,12 @@
                         fontSize: 10
                     }
                 },
-                theme: 'ultra-pivot-dark'
+                theme: 'ultra-pivot-dark',
+                capabilities: [],
+                capabilityOptions: {}
             };
             var opts, colAttrs, rowAttrs, rowKeys, colKeys, tree, rowTotals, colTotals, allTotal, arrowExpanded, arrowCollapsed,
-                capabilities, capabilityHandlers = {};
+                capabilities, capabilityOptions, capabilityHandlers = {};
 
             var classRowHide = "rowhide";
             var classRowShow = "rowshow";
@@ -136,12 +143,8 @@
             allTotal = pivotData.allTotal;
             arrowExpanded = opts.arrowExpanded;
             arrowCollapsed = opts.arrowCollapsed;
-            capabilities = opts.capabilities ? opts.capabilities : [];
-
-            capabilities.forEach(function (capability) {
-                var extension = $.ultraPivotUtils.extensions[capability];
-                if (extension) enableCapability(extension);
-            });
+            capabilities = opts.capabilities;
+            capabilityOptions = opts.capabilityOptions;
 
             var enableCapability = function(extension) {
                 var extInstance = new extension();
@@ -152,22 +155,28 @@
                         }
                         catch (error) {
                             // Remove the extension in case it causes any problem and notify the extension for the same
-                            extInstance.error(error);
+                            extInstance.disabled(error);
                             disableCapability(extInstance);
                         }
                     }, 0);
                 };
 
-                capabilityHandlers[extInstance.capability] = handler;
+                capabilityHandlers[extInstance.name] = handler;
                 $(result).find(extInstance.selector).on(extInstance.events, handler);
                 // Notify the extension that it is added successfully
-                extension.enabled(opts, this);
+                var capOptions = capabilityOptions[extInstance.name];
+                if (!capOptions) {
+                    capOptions = {};
+                    capabilityOptions[extInstance.name] = capOptions;
+                }
+
+                extInstance.enabled(capOptions, instance);
             };
 
             var disableCapability = function(extInstance) {
-                var handler = capabilityHandlers[extension.capability];
+                var handler = capabilityHandlers[extension.name];
                 $(result).find(extInstance.selector).off(extInstance.events, handler);
-                delete capabilityHandlers[extInstance.capability];
+                delete capabilityHandlers[extInstance.name];
             };
 
             this.getTableElement = function () {
@@ -1260,7 +1269,7 @@
             /** First Render */
             var initTables = function() {
                 var $outerContainer = $('<div style="width: 100%; height: 100%;">\
-                            <div class="pvtTableInnerContainer" style="width: 100%; height: 100%; display: none; flex-direction: row;">\
+                            <div class="ultraPivotContainer" style="width: 100%; height: 100%; display: none; flex-direction: row;">\
                                 <div class="c1" style="width: 120px; height: 100%;">\
                                     <div class="c1r1" style="width: 100%; height: 120px;">\
                                             <table class="ultraPivot axisTable" style="width: 100%; height: 120px"></table>\
@@ -1340,7 +1349,7 @@
                 result.setAttribute("data-numcols", colKeys.length);
 
                 setTimeout(function () {
-                    $(result).find('.pvtTableInnerContainer').css('display', 'flex');
+                    $(result).find('.ultraPivotContainer').css('display', 'flex');
                     initScrolls();
                     if (!sizesInitialized) {
                         setSizes(opts.fontOptions);
@@ -1350,7 +1359,15 @@
             };
             var main = function(rowAttrs, rowKeys, colAttrs, colKeys) {
                 initTables();
-                return render(rowAttrs, rowKeys, colAttrs, colKeys);
+                var rs =  render(rowAttrs, rowKeys, colAttrs, colKeys)
+                for (var i in capabilities) {
+                    if (capabilities.hasOwnProperty(i)) {
+                        var capability = capabilities[i];
+                        var extension = $.ultraPivotUtils.extensions[capability];
+                        if (extension) enableCapability(extension);
+                    }
+                }
+                return rs;
             };
         }
 
