@@ -23,12 +23,14 @@
 <script src="../src/js/dataprocessor.js"></script>
 <script src="../src/js/renderers.js"></script>
 
-<p>Dark Theme: "ultra-pivot-dark"</p>
+<p>Default Theme: "ultra-default-light"</p>
 <div id="ultraPivotTable0" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
-<p>Light Theme: "ultra-pivot-light"</p>
+<p>Dark Theme: "ultra-pivot-dark"</p>
 <div id="ultraPivotTable1" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
-<p>Ultra Light Theme: "ultra-pivot-ultra-light"</p>
+<p>Light Theme: "ultra-pivot-light"</p>
 <div id="ultraPivotTable2" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
+<p>Ultra Light Theme: "ultra-pivot-ultra-light"</p>
+<div id="ultraPivotTable3" style="width: 800px; height: 250px; margin-bottom: 20px;"></div>
 
 <script type="text/javascript">
     let utils = $.ultraPivotUtils;
@@ -36,7 +38,7 @@
     let dataClass = utils.UltraPivotData;
     let renderer = utils.subtotal_renderers["Table With Subtotal"];
 
-    var themes = ['ultra-pivot-dark', 'ultra-pivot-light', 'ultra-pivot-ultra-light'];
+    var themes = ['ultra-default-light', 'ultra-pivot-dark', 'ultra-pivot-light', 'ultra-pivot-ultra-light'];
 
     $.getJSON( "sample_data.json", function( data ) {
         for (var i = 0; i < themes.length; i++) {

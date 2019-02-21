@@ -93,7 +93,7 @@
                         fontSize: 10
                     }
                 },
-                theme: 'ultra-pivot-dark',
+                theme: 'ultra-default-light',
                 capabilities: [],
                 capabilityOptions: {}
             };

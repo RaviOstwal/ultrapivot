@@ -142,6 +142,59 @@ table.ultraPivot .pvtAxisLabel {
     cursor: pointer
 }
 
+/* Default Theme Colors */
+.ultra-default-light table.ultraPivot {
+    color: #3D3D3D;
+}
+
+/* full tables background*/
+.ultra-default-light table.ultraPivot {
+    background: #e6EEEE;
+}
+
+/* data rows background*/
+.ultra-default-light table.ultraPivot .pvtVal {
+    background: #fcfdfe;
+}
+
+/* subtotals background*/
+.ultra-default-light table.ultraPivot .rowTotal,
+.ultra-default-light table.ultraPivot .colTotal,
+.ultra-default-light table.ultraPivot .pvtTotalLabel,
+.ultra-default-light table.ultraPivot .pvtColSubtotal,
+.ultra-default-light table.ultraPivot .pvtRowSubtotal,
+.ultra-default-light table.ultraPivot .pvtRowLabelFiller,
+.ultra-default-light table.ultraPivot .pvtColLabelFiller {
+    background: #EFEFEF;
+}
+
+/* grand total background*/
+.ultra-default-light table.ultraPivot .pvtGrandTotal {
+    background: #EFEFEF;
+}
+
+.ultra-default-light table.ultraPivot.rowHeaderTable tr,
+.ultra-default-light table.ultraPivot.axisTable tr,
+.ultra-default-light table.ultraPivot.dataTable tr {
+    border-bottom: 1px solid #CDCDCD;
+}
+
+.ultra-default-light table.ultraPivot.colHeaderTable tr {
+    border-bottom: 1px solid #CDCDCD;
+}
+
+.ultra-default-light table.ultraPivot .pvtColLabel,
+.ultra-default-light table.ultraPivot .pvtTotalLabel.rowTotal,
+.ultra-default-light table.ultraPivot .pvtColLabelFiller {
+    border-left: 1px solid #CDCDCD;
+    border-right: 1px solid #CDCDCD;
+}
+
+.ultra-default-light table.ultraPivot td {
+    border-left: 1px solid #CDCDCD;
+}
+
+
 /*
 *
 * IMPORTANT: Please do not remove the lines below this point
