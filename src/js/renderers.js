@@ -1366,26 +1366,29 @@
 
             /** First Render */
             var initTables = function() {
-                var $outerContainer = $('<div style="width: 100%; height: 100%;">\
-                            <div class="ultraPivotContainer" style="width: 100%; height: 100%; display: none; flex-direction: row;">\
-                                <div class="c1" style="height: 100%; display: flex; flex-direction: column;">\
-                                    <div class="c1 r1" style="width: 100%;">\
-                                            <table class="ultraPivot axisTable" style="width: 100%;"></table>\
-                                    </div>\
-                                    <div class="c1 r2" style="width: 100%; flex: 1; overflow: hidden;">\
-                                            <table class="ultraPivot rowHeaderTable" style="width: 100%; height: fit-content;"></table>\
-                                    </div>\
+                var $outerContainer = $('\
+                    <div style="width: 100%; height: 100%;">\
+                        <div class="ultraPivotContainer" style="width: 100%; height: 100%; display: none; flex-direction: row;">\
+                            <div class="c1" style="height: 100%; display: flex; flex-direction: column; overflow: hidden;">\
+                                <div class="c1 r1" style="width: 100%;">\
+                                    <table class="ultraPivot axisTable" style="width: 100%; height: 100%;"></table>\
                                 </div>\
-                                <div class="c2" style="flex: 1; height: 100%; display: flex; flex-direction: column; overflow: hidden;">\
-                                    <div class="c2 r1" style="width: 100%; overflow: hidden;">\
-                                        <table class="ultraPivot colHeaderTable" style="width: fit-content;"></table>\
-                                    </div>\
-                                    <div class="c2 r2" style="width: 100%; flex: 1; overflow: auto;">\
-                                        <table class="ultraPivot dataTable" style="height: fit-content; width: fit-content;"></table>\
-                                    </div>\
+                                <div class="c1 r2" style="width: 100%; flex: 1; overflow: hidden;">\
+                                    <table class="ultraPivot rowHeaderTable" style="width: 100%; height: fit-content;"></table>\
                                 </div>\
                             </div>\
-                        </div>');
+                            <div class="c2" style="width: fit-content; height: 100%; display: flex; flex-direction: column; overflow: hidden;">\
+                                <div class="c2 r1" style="width: 100%; overflow: hidden;">\
+                                    <table class="ultraPivot colHeaderTable" style="width: fit-content; height: 100%;"></table>\
+                                </div>\
+                                <div class="c2 r2" style="width: 100%; flex: 1; overflow: auto;">\
+                                    <table class="ultraPivot dataTable" style="height: fit-content; width: fit-content;"></table>\
+                                </div>\
+                            </div>\
+                            <div class="c3" style="flex: 1;"></div>\
+                        </div>\
+                    </div>\
+                ');
 
                 result = $outerContainer[0];
                 $(result).addClass(opts.theme);

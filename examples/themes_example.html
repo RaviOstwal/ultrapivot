@@ -40,7 +40,7 @@
 
     var themes = ['ultra-default-light', 'ultra-pivot-dark', 'ultra-pivot-light', 'ultra-pivot-ultra-light'];
 
-    $.getJSON( "sample_data.json", function( data ) {
+    $.getJSON( "data/sample_data.json", function( data ) {
         for (var i = 0; i < themes.length; i++) {
             $("#ultraPivotTable" + i).ultraPivot(
                 data,
