@@ -144,8 +144,8 @@ body {
 }
 .btn-primary,
 .btn-primary:active {
-  background-color: #149dcc !important;
-  border-color: #149dcc !important;
+  background-color: #527efc !important;
+  border-color: #4c8afc !important;
   color: #ffffff !important;
 }
 .btn-primary:hover,
@@ -153,8 +153,8 @@ body {
 .btn-primary.focus,
 .btn-primary.active {
   color: #ffffff !important;
-  background-color: #0d6786 !important;
-  border-color: #0d6786 !important;
+  background-color: #409ffd !important;
+  border-color: #409ffd !important;
 }
 .btn-primary.disabled,
 .btn-primary:disabled {
@@ -1381,19 +1381,19 @@ body {
 .cid-riyN6XRDp4 {
   padding-top: 90px;
   padding-bottom: 30px;
-  background: linear-gradient(45deg, #ffffff, #149dcc);
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
 }
 .cid-riyN6XRDp4 .btn {
   margin: 0 0 .5rem 0;
 }
 .cid-riyMcYCmiP .navbar {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
   transition: none;
   min-height: 77px;
   padding: .5rem 0;
 }
 .cid-riyMcYCmiP .navbar-dropdown.bg-color.transparent.opened {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
 }
 .cid-riyMcYCmiP a {
   font-style: normal;
@@ -1904,7 +1904,7 @@ body {
 .cid-riKFlbgsFe {
   padding-top: 90px;
   padding-bottom: 90px;
-  background-color: #55b4d4;
+  background-color: #ffffff;
 }
 .cid-riKFlbgsFe .socicon-bg-facebook {
   background: #3e5b98;
@@ -1949,8 +1949,7 @@ body {
 .cid-riKaQ9JwwO {
   padding-top: 30px;
   padding-bottom: 30px;
-  background-color: #ffffff;
-  background: linear-gradient(45deg, #ffffff, #149dcc);
+  background-color: #efefef;
 }
 .cid-riKaQ9JwwO .mbr-section-subtitle {
   color: #767676;
@@ -1977,13 +1976,13 @@ body {
   background-color: #2e2e2e;
 }
 .cid-riyMcYCmiP .navbar {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
   transition: none;
   min-height: 77px;
   padding: .5rem 0;
 }
 .cid-riyMcYCmiP .navbar-dropdown.bg-color.transparent.opened {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
 }
 .cid-riyMcYCmiP a {
   font-style: normal;
@@ -2377,13 +2376,13 @@ body {
   color: #efefef !important;
 }
 .cid-riyMcYCmiP .navbar {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
   transition: none;
   min-height: 77px;
   padding: .5rem 0;
 }
 .cid-riyMcYCmiP .navbar-dropdown.bg-color.transparent.opened {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
 }
 .cid-riyMcYCmiP a {
   font-style: normal;
@@ -2777,13 +2776,13 @@ body {
   color: #efefef !important;
 }
 .cid-riyMcYCmiP .navbar {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
   transition: none;
   min-height: 77px;
   padding: .5rem 0;
 }
 .cid-riyMcYCmiP .navbar-dropdown.bg-color.transparent.opened {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
 }
 .cid-riyMcYCmiP a {
   font-style: normal;
@@ -3177,13 +3176,13 @@ body {
   color: #efefef !important;
 }
 .cid-riyMcYCmiP .navbar {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
   transition: none;
   min-height: 77px;
   padding: .5rem 0;
 }
 .cid-riyMcYCmiP .navbar-dropdown.bg-color.transparent.opened {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
 }
 .cid-riyMcYCmiP a {
   font-style: normal;
@@ -3577,13 +3576,13 @@ body {
   color: #efefef !important;
 }
 .cid-riyMcYCmiP .navbar {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
   transition: none;
   min-height: 77px;
   padding: .5rem 0;
 }
 .cid-riyMcYCmiP .navbar-dropdown.bg-color.transparent.opened {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
 }
 .cid-riyMcYCmiP a {
   font-style: normal;
@@ -3977,13 +3976,13 @@ body {
   color: #efefef !important;
 }
 .cid-riyMcYCmiP .navbar {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
   transition: none;
   min-height: 77px;
   padding: .5rem 0;
 }
 .cid-riyMcYCmiP .navbar-dropdown.bg-color.transparent.opened {
-  background: #149dcc;
+  background: linear-gradient(135deg, #36befd 1%, #6461f6 100%);
 }
 .cid-riyMcYCmiP a {
   font-style: normal;
