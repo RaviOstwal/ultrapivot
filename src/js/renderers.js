@@ -97,7 +97,7 @@
                 capabilities: [],
                 capabilityOptions: {}
             };
-            var opts, colAttrs, rowAttrs, rowKeys, colKeys, tree, rowTotals, colTotals, allTotal, arrowExpanded, arrowCollapsed,
+            var opts, colAttrs, rowAttrs, rowKeys, colKeys, tree, rowTotals, colTotals, rowCount, colCount, allTotal, arrowExpanded, arrowCollapsed,
                 capabilities, capabilityOptions, capabilityHandlers = {};
 
             var classRowHide = "rowhide";
@@ -140,6 +140,24 @@
             tree = pivotData.tree;
             rowTotals = pivotData.rowTotals;
             colTotals = pivotData.colTotals;
+            rowCount = (function (obj) {
+                var c = 0;
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        c++;
+                    }
+                }
+                return c;
+            })(rowTotals);
+            colCount = (function (obj) {
+                var c = 0;
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        c++;
+                    }
+                }
+                return c;
+            })(colTotals);
             allTotal = pivotData.allTotal;
             arrowExpanded = opts.arrowExpanded;
             arrowCollapsed = opts.arrowCollapsed;
@@ -1110,44 +1128,17 @@
             var getSizeForN = function (n, unit) {
                 return (n * unit) + (n - 1);
             };
+
+            /** Adjusting sizes */
+            var fitRows, fitCols, unitSize, axisSize, containerBounds;
             var setSizes = function(fontOptions) {
                 if (sizesInitialized) return;
                 sizesInitialized = true;
-                function setWidth($ele, width) {
-                    //width = isNaN(width) ? width : (width + 'px');
-                    $ele.css('width', width);
-                    $ele.css('min-width', width);
-                    $ele.css('max-width', width);
-                }
 
-                function setHeight($ele, height) {
-                    $ele.css('height', height);
-                    $ele.css('min-height', height);
-                    $ele.css('max-height', height);
-                }
-
-                function getFontUnits(font, defaultFont) {
-                    var test = $(createElement('div', 'pivot_test'));
-                    test.css('position', 'absolute');
-                    test.css('visibility', 'hidden');
-                    test.css('height', 'auto');
-                    test.css('width', 'auto');
-                    test.css('white-space', 'nowrap');
-                    $(result).append(test);
-
-                    setFont(test, font, true, defaultFont);
-                    test.text("◢ Ravi Ostwal Jain");
-
-                    var height = Math.ceil(test.height());
-                    var width = Math.ceil(test.width());
-
-                    test.remove();
-
-                    return { height: height, width: width};
-                }
-
-                var totalWidth = $(result).width();
-                var totalHeight = $(result).height();
+                containerBounds = {
+                    height: $(result).height(),
+                    width: $(result).width()
+                };
 
                 var dataUnits = getFontUnits(fontOptions.dataFont, defaults.fontOptions.dataFont);
                 var rowUnits = getFontUnits(fontOptions.rowHeaderFont, defaults.fontOptions.rowHeaderFont);
@@ -1157,39 +1148,131 @@
                     height: Math.max(Math.max(rowUnits.height, dataUnits.height), columnUnits.height),
                     width: Math.max(Math.max(rowUnits.width, dataUnits.width), columnUnits.width)
                 };
-                var axisHeight = getSizeForN(colAttrs.length + 1, units.height + 10);
-                var axisWidth = getSizeForN(rowAttrs.length + 1, units.width + 10);
+                unitSize = {
+                    height: units.height + 10,
+                    width: units.width + 10
+                };
+                var axisHeight = getSizeForN(colAttrs.length + 1, unitSize.height);
+                var axisWidth = getSizeForN(rowAttrs.length + 1, unitSize.width);
+                axisSize = {height: axisHeight, width: axisWidth};
 
-                setWidth($(result).find('.c1'), axisWidth);
-                setWidth($(result).find('.c2'), totalWidth - axisWidth);
+                fitRows = Math.ceil((containerBounds.height - axisHeight) / unitSize.height);
+                fitCols = Math.ceil((containerBounds.width - axisWidth) / unitSize.width);
 
-                setHeight($(result).find('.c1r1'), axisHeight);
-                setHeight($(result).find('.c1r2'), totalHeight - axisHeight);
-                setHeight($(result).find('.c2r1'), axisHeight);
-                setHeight($(result).find('.c2r2'), totalHeight - axisHeight);
+                configSizes(fontOptions);
+            };
 
-                // col header and axis will always have same height
-                setHeight($(colHeaderTable), axisHeight);
-                setHeight($(axisTable), axisHeight);
-                setHeight($(colHeaderTable).find('th'), units.height);
-                setHeight($(axisTable).find('th'), units.height);
+            var configSizes = function(fontOptions) {
+                var units = {
+                    height: unitSize.height - 10,
+                    width: unitSize.width - 10
+                };
+                setHeight($(result).find('.r1'), axisSize.height);
+                setWidth($(result).find('.c1'), axisSize.width);
 
-                // row header and axis will always have same width
-                setWidth($(rowHeaderTable), axisWidth);
-                setWidth($(axisTable), axisWidth);
-                setWidth($(rowHeaderTable).find('th'), units.width);
-                setWidth($(axisTable).find('th'), units.width);
-
-                // height of each th of row header should be in sync with each td of data
-                setHeight($(rowHeaderTable).find('th'), units.height);
-                setHeight($(dataTable).find('td'), units.height);
-
-                // width of each th of col header should be in sync with each td of data
-                setWidth($(colHeaderTable).find('th'), units.width);
-                setWidth($(dataTable).find('td'), units.width);
+                setHeight($(result).find('th'), units.height);
+                setHeight($(result).find('td'), units.height);
+                setWidth($(result).find('th'), units.width);
+                setWidth($(result).find('td'), units.width);
 
                 applyFonts(fontOptions);
             };
+
+            function setWidth($ele, width) {
+                $ele.css('width', width);
+                $ele.css('min-width', width);
+                $ele.css('max-width', width);
+            }
+
+            function setHeight($ele, height) {
+                $ele.css('height', height);
+                $ele.css('min-height', height);
+                $ele.css('max-height', height);
+            }
+
+            function getFontUnits(font, defaultFont) {
+                var test = $(createElement('div', 'pivot_test'));
+                test.css('position', 'absolute');
+                test.css('visibility', 'hidden');
+                test.css('height', 'auto');
+                test.css('width', 'auto');
+                test.css('white-space', 'nowrap');
+                $(result).append(test);
+
+                setFont(test, font, true, defaultFont);
+                test.text("◢ Ravi Ostwal Jain");
+
+                var height = Math.ceil(test.height());
+                var width = Math.ceil(test.width());
+
+                test.remove();
+
+                return { height: height, width: width};
+            }
+
+            /** On demand rendering : Future v2
+            var fitRows, fitCols, unitSize, axisSize, containerBounds, bufferSize = { c: rowCount, r: colCount}, onDemandRendering = false;
+            var BoxRenderer = function(boxRow, boxCol, rStart, cStart, rEnd, cEnd) {
+                this.boxRow = boxRow;
+                this.boxCol = boxCol;
+                this.rStar = rStart;
+                this.cStart = cStart;
+                this.rEnd = rEnd;
+                this.cEnd = cEnd;
+
+                var rowKeys, colKeys;
+
+                this.render = function() {
+                    rowKeys = pivotData.getRowKeys();
+                    colKeys = pivotData.getColKeys();
+
+                    var chKey, colAttrHeaders, colAxisHeaders, colKeyHeaders, k, l, len, len1, node, ref, ref1, rowAttrHeaders, rowAxisHeaders, rowKeyHeaders, tr;
+                    rowAttrHeaders = [];
+                    colAttrHeaders = [];
+                    if (colAttrs.length !== 0 && colKeys.length !== 0) {
+                        colKeyHeaders = processKeys(colKeys, "pvtColLabel");
+                    }
+                    if (rowAttrs.length !== 0 && rowKeys.length !== 0) {
+                        rowKeyHeaders = processKeys(rowKeys, "pvtRowLabel");
+                    }
+
+                    if (colAttrs.length !== 0) {
+                        colAxisHeaders = buildColAxisHeaders(rowAttrs, colAttrs, opts);
+                        node = {
+                            counter: 0
+                        };
+                        ref = colKeyHeaders.children;
+                        for (k = 0, len = ref.length; k < len; k++) {
+                            chKey = ref[k];
+                            buildColHeader(colAxisHeaders, colAttrHeaders, colKeyHeaders[chKey], rowAttrs, colAttrs, node, opts);
+                        }
+                        buildRowTotalsHeader(colAxisHeaders.ah[0].ctr, rowAttrs, colAttrs);
+                    }
+                    if (rowAttrs.length !== 0) {
+                        rowAxisHeaders = buildRowAxisHeaders(rowAttrs, colAttrs, opts);
+                        if (colAttrs.length === 0) {
+                            buildRowTotalsHeader(rowAxisHeaders.tr, rowAttrs, colAttrs);
+                        }
+                        node = {
+                            counter: 0
+                        };
+                        ref1 = rowKeyHeaders.children;
+                        for (l = 0, len1 = ref1.length; l < len1; l++) {
+                            chKey = ref1[l];
+                            buildRowHeader(rowAxisHeaders, rowAttrHeaders, rowKeyHeaders[chKey], rowAttrs, colAttrs, node, opts);
+                        }
+                    }
+                    buildValues(colAttrHeaders, rowAttrHeaders, rowAttrs, colAttrs, opts);
+                    tr = buildColTotalsHeader(rowAttrs, colAttrs);
+                    rowHeaderTable.appendChild(tr);
+                    if (colAttrs.length > 0) {
+                        tr = createElement('tr');
+                        buildColTotals(tr, colAttrHeaders, rowAttrs, colAttrs, opts);
+                        dataTable.appendChild(tr);
+                    }
+                }
+            };
+            */
 
             /** Scrolling */
             var initScrolls = function() {
@@ -1225,7 +1308,7 @@
                 };
 
                 var onContentSizeChanged = function() {
-                    setSizes(opts.fontOptions);
+                    //setSizes(opts.fontOptions);
                 };
 
                 dataScroller = createScroller($(result).find('.c2.r2'),
@@ -1310,6 +1393,23 @@
                 rowHeaderTable = $outerContainer.find('.rowHeaderTable')[0];
                 colHeaderTable = $outerContainer.find('.colHeaderTable')[0];
                 dataTable = $outerContainer.find('.dataTable')[0];
+
+                /** On demand rendering : Future v2
+                if ((rowCount * colCount) > opts.renderOnScroll.maxNoOfElements) {
+                    var idealBufferSize = Math.round(Math.sqrt(opts.renderOnScroll.maxNoOfElements));
+                    bufferSize.r = Math.min(rowCount, idealBufferSize);
+                    if (bufferSize.r < idealBufferSize)
+                        bufferSize.c = Math.round(opts.renderOnScroll.maxNoOfElements / bufferSize.r);
+                    else
+                        bufferSize.c = Math.min(colCount, idealBufferSize);
+
+                    if (bufferSize.c < idealBufferSize)
+                        bufferSize.r = Math.round(opts.renderOnScroll.maxNoOfElements / bufferSize.c);
+
+                    onDemandRendering = bufferSize.r !== rowCount || bufferSize.c !== colCount;
+                }
+                */
+
             };
             var render = function(rowAttrs, rowKeys, colAttrs, colKeys) {
                 var chKey, colAttrHeaders, colAxisHeaders, colKeyHeaders, k, l, len, len1, node, ref, ref1, rowAttrHeaders, rowAxisHeaders, rowKeyHeaders, tr;
@@ -1372,13 +1472,28 @@
                 }, 0);
                 return result;
             };
-            /** On demand rendering : Future v2
-             var bufferSize = { c: rowCount, r: colCount};
-             var realTimeRendering = false;
-             * */
             var main = function(rowAttrs, rowKeys, colAttrs, colKeys) {
                 initTables();
-                var rs =  render(rowAttrs, rowKeys, colAttrs, colKeys)
+
+                /** On demand rendering : Future v2
+                var i, j, rows, cols, size = 50, rendererBoxes = [], maxRow, maxCol, startRow, endRow, startCol, endCol;
+                rows = Math.ceil(rowCount / size);
+                cols = Math.ceil(colCount / size);
+                maxRow = rowCount -1;
+                maxCol = colCount -1;
+                for (i = 0; i < rows; i++) {
+                    var boxRow = [];
+                    for (j = 0; j < cols; j++) {
+                        startRow = i * size; endRow = Math.min(maxRow, (((i + 1) * size) - 1));
+                        startCol = j * size; endCol = Math.min(maxCol, (((j + 1) * size) - 1));
+                        console.log(i, j, startRow + '-' + endRow, startCol + '-' + endCol);
+                        var boxRenderer = new BoxRenderer(i, j, startRow, startCol, endRow, endCol);
+                        boxRow.push(boxRenderer);
+                    }
+                    rendererBoxes.push(boxRow);
+                } */
+
+                var rs = render(rowAttrs, rowKeys, colAttrs, colKeys);
                 for (var i in capabilities) {
                     if (capabilities.hasOwnProperty(i)) {
                         var capability = capabilities[i];
