@@ -182,6 +182,13 @@
             this.getTableElement = function () {
                 return result ? result : main(rowAttrs, rowKeys, colAttrs, colKeys);
             };
+
+            this.getRowCount = function () {
+                return rowCount;
+            };
+            this.getColCount = function () {
+                return colCount;
+            };
             this.getRowKeys = function () {
                 return rowKeys;
             };
@@ -202,6 +209,15 @@
             };
             this.getGrandTotal = function () {
                 return allTotal;
+            };
+            this.getRowChild = function (rHeader) {
+                return null; //todo
+            };
+            this.getColChild = function (cHeader) {
+                return null; //todo
+            };
+            this.getDataChild = function (rHeader, cHeader) {
+                return null; //todo
             };
 
             var hasClass = function(element, className) {
@@ -1105,7 +1121,6 @@
                 }
 
                 function setHeight($ele, height) {
-                    //height = isNaN(height) ? height : (height + 'px');
                     $ele.css('height', height);
                     $ele.css('min-height', height);
                     $ele.css('max-height', height);
@@ -1213,7 +1228,7 @@
                     setSizes(opts.fontOptions);
                 };
 
-                dataScroller = createScroller($(result).find('.c2r2'),
+                dataScroller = createScroller($(result).find('.c2.r2'),
                     {
                         x: 'scroll',
                         y: 'scroll'
@@ -1223,7 +1238,7 @@
                         onContentSizeChanged: onContentSizeChanged
                     }, 'auto');
 
-                rowScroller = createScroller($(result).find('.c1r2'),
+                rowScroller = createScroller($(result).find('.c1.r2'),
                     {
                         x: 'hidden',
                         y: 'scroll'
@@ -1232,7 +1247,7 @@
                         onScroll: onRowScroll
                     }, 'hidden');
 
-                colScroller = createScroller($(result).find('.c2r1'),
+                colScroller = createScroller($(result).find('.c2.r1'),
                     {
                         x: 'scroll',
                         y: 'hidden'
@@ -1270,20 +1285,20 @@
             var initTables = function() {
                 var $outerContainer = $('<div style="width: 100%; height: 100%;">\
                             <div class="ultraPivotContainer" style="width: 100%; height: 100%; display: none; flex-direction: row;">\
-                                <div class="c1" style="width: 120px; height: 100%;">\
-                                    <div class="c1r1" style="width: 100%; height: 120px;">\
-                                            <table class="ultraPivot axisTable" style="width: 100%; height: 120px"></table>\
+                                <div class="c1" style="height: 100%; display: flex; flex-direction: column;">\
+                                    <div class="c1 r1" style="width: 100%;">\
+                                            <table class="ultraPivot axisTable" style="width: 100%;"></table>\
                                     </div>\
-                                    <div class="c1r2" style="width: 100%; height: calc(100% - 120px); overflow: hidden;">\
-                                            <table class="ultraPivot rowHeaderTable" style="width: 100%;"></table>\
+                                    <div class="c1 r2" style="width: 100%; flex: 1; overflow: hidden;">\
+                                            <table class="ultraPivot rowHeaderTable" style="width: 100%; height: fit-content;"></table>\
                                     </div>\
                                 </div>\
-                                <div class="c2" style="width: calc(100% - 120px); height: 100%;">\
-                                    <div class="c2r1" style="width: 100%; height: 120px; overflow: hidden;">\
-                                        <table class="ultraPivot colHeaderTable" style="height: 100%"></table>\
+                                <div class="c2" style="flex: 1; height: 100%; display: flex; flex-direction: column; overflow: hidden;">\
+                                    <div class="c2 r1" style="width: 100%; overflow: hidden;">\
+                                        <table class="ultraPivot colHeaderTable" style="width: fit-content;"></table>\
                                     </div>\
-                                    <div class="c2r2" style="width: 100%; height: calc(100% - 120px); overflow: auto;">\
-                                        <table class="ultraPivot dataTable"></table>\
+                                    <div class="c2 r2" style="width: 100%; flex: 1; overflow: auto;">\
+                                        <table class="ultraPivot dataTable" style="height: fit-content; width: fit-content;"></table>\
                                     </div>\
                                 </div>\
                             </div>\
@@ -1357,6 +1372,10 @@
                 }, 0);
                 return result;
             };
+            /** On demand rendering : Future v2
+             var bufferSize = { c: rowCount, r: colCount};
+             var realTimeRendering = false;
+             * */
             var main = function(rowAttrs, rowKeys, colAttrs, colKeys) {
                 initTables();
                 var rs =  render(rowAttrs, rowKeys, colAttrs, colKeys)
