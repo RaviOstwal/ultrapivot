@@ -45,7 +45,7 @@
 <li>Write the content for the documentation and web pages.</li>
 </ul>
 
-<p>Any suggestions or contribution would be greatly appreciated. You can simply log the issues on this project form <a href="https://github.com/RaviOstwal/ultrapivot/issues/new">here for specific improvement or suggestion</a></p>
+<p>Any suggestions or contribution would be greatly appreciated. You can simply log the issues on this project form <a href="https://github.com/RaviOstwal/ultrapivot/issues/new">here</a>for specific improvement or suggestion</p>
 
 
 <h2>Demos</h2>
