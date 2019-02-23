@@ -1,0 +1,20 @@
+.ultraPivotContainer.highlighted th:not(.hylyt),
+.ultraPivotContainer.highlighted td:not(.hylyt) {
+    opacity: 0.6 !important;
+}
+
+.ultraPivotContainer.highlighted th:not(.hylyt):hover,
+.ultraPivotContainer.highlighted td:not(.hylyt):hover {
+    opacity: 1.0 !important;
+    background-color: #2196F3 !important;
+}
+
+.ultraPivotContainer. th:hover,
+.ultraPivotContainer. td:hover {
+    opacity: 1.0 !important;
+    background-color: #2196F3 !important;
+}
+
+.hylyt {
+    background-color: #2196F3 !important;
+}
