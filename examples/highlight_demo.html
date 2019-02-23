@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ultra Pivot Basic</title>
+    <title>Ultra Pivot Highlight Demo</title>
 </head>
 <body>
 
@@ -10,6 +10,7 @@
 <link rel="stylesheet" type="text/css" href="../src/css/ultrapivot.css">
 <link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-dark.css">
 <link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-ultra-light.css">
+<link rel="stylesheet" type="text/css" href="../src/extensions/ultra-highlighter/ultra-highlighter.css">
 
 <script type="text/javascript" src="../libs/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="../libs/js/jquery.overlayScrollbars.js"></script>
@@ -21,8 +22,13 @@
 <script src="../src/js/aggregators.js"></script>
 <script src="../src/js/dataprocessor.js"></script>
 <script src="../src/js/renderers.js"></script>
+<script src="../src/extensions/ultra-highlighter/ultra-highlighter.js"></script>
 
-<div id="ultraPivotTable" style="width: 800px; height: 250px;"></div>
+<ul>
+    <li>Try click on any row header, column header or data</li>
+    <li>Try ctrl + click to toggle highlighting</li>
+</ul>
+<div id="ultraPivotTable" style="width: 100%; height: 100%;"></div>
 
 <script type="text/javascript" >
     let utils = $.ultraPivotUtils;
