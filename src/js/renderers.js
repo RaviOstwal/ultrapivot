@@ -91,7 +91,7 @@
                 capabilities: ['table-highlight']
             };
             var opts, colAttrs, rowAttrs, rowKeys, colKeys, tree, rowTotals, colTotals, rowCount, colCount, allTotal, arrowExpanded, arrowCollapsed,
-                capabilities, rowHeadersTree, colHeadersTree;
+                capabilities, rowHeadersTree, colHeadersTree, dataScroller;
 
             var classRowHide = "rowhide";
             var classRowShow = "rowshow";
@@ -150,8 +150,6 @@
             arrowExpanded = opts.arrowExpanded;
             arrowCollapsed = opts.arrowCollapsed;
             capabilities = opts.capabilities;
-            rowHeadersTree = null;
-            colHeadersTree = null;
 
             var enableCapability = function(capability) {
                 if (!activeExtensions[capability]) {
@@ -235,6 +233,10 @@
             };
             this.getColHeadersTree = function() {
                 return colHeadersTree;
+            };
+            this.scroll = function(a, b, c) {
+                if (a || b || c) dataScroller.scroll(a, b, c);
+                else return dataScroller.scroll();
             };
 
             var collectChildren = function (h, header, total, data, res) {
@@ -1306,7 +1308,7 @@
 
             /** Scrolling */
             var initScrolls = function() {
-                var dataScroller, rowScroller, colScroller, coord = {x: 0, y: 0};
+                var rowScroller, colScroller, coord = {x: 0, y: 0};
 
                 var onDataScroll = function() {
                     var scroll = dataScroller.scroll();

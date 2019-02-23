@@ -18,3 +18,9 @@
 .hylyt {
     background-color: #2196F3 !important;
 }
+
+.dragRect {
+    position: absolute;
+    border: 1px solid #64B5F6;
+    background: rgba(187, 222, 251, 0.6);
+}

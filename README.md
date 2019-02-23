@@ -3,28 +3,36 @@
 
 <p>UltraPivot.js is a further extension on the same which provides you more feature rich table with stylings like font, foreground and background colors and most importantly has scrolls over the data table which lets you scroll row headers and column headers in sync.</p>
 
-<p>You will still be able to do all the stuff which <a href="https://pivottable.js.org/examples/" rel="nofollow">PivotTable.js</a> and <a href="http://nagarajanchinnasamy.com/subtotal/examples/" rel="nofollow">SubTotal.js</a> provide right through UltraPivot and with same options as it’s just an extension over them which itself is extensible.</p>
+<p>You will still be able to do all the stuff which <a href="https://pivottable.js.org/examples/" rel="nofollow">PivotTable.js</a> and <a href="http://nagarajanchinnasamy.com/subtotal/examples/" rel="nofollow">SubTotal.js</a> provide right through UltraPivot and with same options with flexibility to do much more things.</p>
 
 
 <h2>Featue Roadmap</h2>
-<h3>Version 1.0 Target</h3>
+<h3>Version 1.0 Targets</h3>
 <ol>
 <li>Support synced scroll of column header and row header with data keeping headers sticky.</li>
 <li>Support default themes like dark, light, lighter etc.</li>
 <li>Make UltraPivot easily extensible for developer to add their own features.</li>
-<li>Support configurable font formatting as extension.</li>
+<li>Support built-in configurable font formatting</li>
+<li>Add highlighting feature to table as extension.</li>
 <li>Support configurable color formatting as extension.</li>
+<li>Add tootips feature to table as extension.</li>
 <li>Support context menu as extension.</li>
 </ol>
 
-<h3>Version 2.0 Target</h3>
+<h3>Version 2.0 Targets</h3>
 <ol>
 <li>Table Highlighting like row selection, column selection and cell selection</li>
 <li>Editable cell with custom formatters like textarea, checkbox, start ratting, shapes</li>
+<li>Change implemntation to leverage latest browser technologies for better performance.</li>
 <li>Performance Improvement to handle almost any no of rows/column.</li>
 <li>Support charts within the table like Bar, Line, Area, Shape with distribution based on any level in hierarchy.</li>
 </ol>
 
+<h3>Version 3.0 Targets</h3>
+<ol>
+<li>Research NLP support for browser to be integrate with Ultra table.</li>
+<li>Provide advance filters and sort.</li>
+</ol>
 
 <h2>Project website</h2>
 <p>Create <a href="https://raviostwal.github.io/ultrapivot/home.html">Website<a> on gihub website for demos: A small website with below pages</p>
@@ -45,7 +53,7 @@
 <li>Write the content for the documentation and web pages.</li>
 </ul>
 
-<p>Any suggestions or contribution would be greatly appreciated. You can simply log the issues on this project form <a href="https://github.com/RaviOstwal/ultrapivot/issues/new">here</a>for specific improvement or suggestion</p>
+<p>Any suggestions or contribution would be greatly appreciated. You can simply log the issues on this project <a href="https://github.com/RaviOstwal/ultrapivot/issues/new">here</a> for specific improvement or suggestion</p>
 
 
 <h2>Demos</h2>

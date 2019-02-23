@@ -49,6 +49,8 @@
                     instance.options = options.highlightOptions;
                     instance.renderer = renderer;
                     instance.container = $(renderer.getTableElement()).find('.ultraPivotContainer');
+                    instance.dataTable = $(instance.container.find('.dataTable')[0]);
+                    instance.dataTable.css('position', 'relative');
                     if (instance.options.enableRowSelection || instance.options.enableColSelection) {
                         instance.selectionType += 'header ';
                     }
@@ -65,12 +67,23 @@
                 instance.initEvents = function () {
                     var $target = $(instance.renderer.getTableElement()).find(selector);
                     $target.on('mousedown', instance.mousePress);
+
+                    instance.dataTable.on('mousemove', instance.mouseMove);
+                    instance.dataTable.on('mouseover', instance.mouseIn);
+                    instance.dataTable.on('mouseout', instance.mouseOut);
+
                     $target.on('mouseup', instance.mouseRelease);
                 };
 
                 // ctrlKey, metaKey ,shiftKey
                 instance.isCtrl = false;
                 instance.isShift = false;
+                instance.dataTableBound = null;
+                instance.dragStartPoint = null;
+                instance.dragRectBound = null;
+                instance.scrollView = null;
+
+                instance.dragRect = $('<div class="dragRect"></div>');
 
                 instance.mousePress = function (event) {
                     instance.isCtrl = event.ctrlKey || event.metaKey;
@@ -79,9 +92,137 @@
                     if (!instance.isCtrl && !instance.isShift) {
                         instance.clearHighlight();
                     }
+
+                    if ($(event.currentTarget).hasClass('dataTable')) {
+                        instance.dataTableBound = instance.dataTable[0].getBoundingClientRect();
+                        instance.dragStartPoint = {x1: event.clientX - instance.dataTableBound.x, y1: event.clientY - instance.dataTableBound.y};
+                        var viewBox = instance.container.find('.c2.r2')[0];
+                        instance.scrollView = {x1: viewBox.offsetLeft, y1: viewBox.offsetTop, x2: viewBox.offsetLeft + viewBox.clientWidth, y2: viewBox.offsetTop + viewBox.clientHeight};
+                    }
                 };
 
-                instance.mouseRelease = function (event) {
+                instance.mouseMove = function (event) {
+                    if (!instance.dragStartPoint) return;
+                    var rect;
+                    if (!instance.dragRectBound) {
+                        instance.dragRectBound = instance.dragStartPoint;
+                        rect = instance.dragRectBound;
+                        instance.dataTable.append(instance.dragRect);
+                        instance.dragRect.css('left', rect.x1);
+                        instance.dragRect.css('top', rect.y1);
+                        rect.x2 = rect.x1;
+                        rect.y2 = rect.y1;
+                        return;
+                    }
+                    else {
+                        rect = instance.dragRectBound;
+                    }
+                    rect.x2 = event.clientX - instance.dataTableBound.x;
+                    rect.y2 = event.clientY - instance.dataTableBound.y;
+
+                    instance.dragRect.css('left', Math.min(rect.x1, rect.x2));
+                    instance.dragRect.css('top', Math.min(rect.y1, rect.y2));
+                    instance.dragRect.css('width', Math.abs(rect.x2 - rect.x1));
+                    instance.dragRect.css('height', Math.abs(rect.y2 - rect.y1));
+                };
+
+                instance.scroller = null;
+                instance.mouseOut = function (event) {
+                    if (!instance.scrollView) return;
+
+                    var scrolled = instance.renderer.scroll();
+                    var viewBox = instance.scrollView, yScroll = '+= 0px', xScroll = '+= 0px', sx = 0, sy = 0;
+
+                    if (scrolled.x.ratio !== 1 && viewBox.x2 - event.clientX < 15) {
+                        xScroll = '+= 30px'; sx = 30;
+                    }
+                    else if (scrolled.x.ratio !== 1 && event.clientX - viewBox.x1 < 15) {
+                        xScroll = '-= 30px'; sx = -30;
+                    }
+                    if (scrolled.y.ratio !== 1 && viewBox.y2 - event.clientY < 15) {
+                        yScroll = '+= 30px'; sy = +30;
+                    }
+                    else if (scrolled.y.ratio !== 1 && event.clientY - viewBox.y1 < 15) {
+                        yScroll = '-= 30px'; sy = -30;
+                    }
+
+                    if (sx === 0 && sy === 0) {
+                        return;
+                    }
+
+                    instance.scroller = setInterval(function () {
+                        if (scrolled.x.ratio !== 1 || scrolled.y.ratio !== 1) {
+                            if (sx !== 0) {
+                                var left = instance.dragRect.offset().left;
+                                var width = instance.dragRect.width();
+                                if (sx < 0) left += sx;
+                                width += Math.abs(sx);
+
+                                if ((left + width + 10) < instance.dataTableBound.right) {
+                                    instance.dragRect.css('left', left);
+                                    instance.dragRect.css('width', width);
+                                }
+                            }
+                            if (sy !== 0) {
+                                var top = instance.dragRect.offset().top;
+                                var height = instance.dragRect.height();
+                                if (sy < 0) top += sy;
+                                height += Math.abs(sy);
+
+                                if ((top + height + 10) < instance.dataTableBound.bottom) {
+                                    instance.dragRect.css('top', top);
+                                    instance.dragRect.css('height', height);
+                                }
+                            }
+                            instance.renderer.scroll({ x : xScroll, y : yScroll }, 40);
+                        }
+                        else {
+                            clearInterval(instance.scroller);
+                            instance.scroller = null;
+                        }
+                    }, 50);
+                };
+
+                instance.mouseIn = function (event) {
+                    if (instance.scroller) {
+                        clearInterval(instance.scroller);
+                        instance.scroller = null;
+
+                        var rect = instance.dragRectBound;
+                        rect.x2 = event.clientX - instance.dataTableBound.x;
+                        rect.y2 = event.clientY - instance.dataTableBound.y;
+
+                        instance.dragRect.css('left', Math.min(rect.x1, rect.x2));
+                        instance.dragRect.css('top', Math.min(rect.y1, rect.y2));
+                        instance.dragRect.css('width', Math.abs(rect.x2 - rect.x1));
+                        instance.dragRect.css('height', Math.abs(rect.y2 - rect.y1));
+                    }
+                };
+
+                instance.mouseRelease = function(event) {
+                    instance._mouseRelease(event);
+
+                    instance.dragRect.remove();
+                    instance.dragRect.css('width', 0);
+                    instance.dragRect.css('height', 0);
+                    instance.dragStartPoint = null;
+                    instance.dragRectBound = null;
+                    instance.scrollView = null;
+                };
+
+                instance._mouseRelease = function (event) {
+                    if (instance.dragRectBound) {
+                        var i, rect = instance.dragRectBound, $cells;
+                        $cells = rectangleSelect(instance.dataTable,'td',
+                            instance.dataTableBound.x + Math.min(rect.x1, rect.x2), instance.dataTableBound.y + Math.min(rect.y1, rect.y2),
+                            instance.dataTableBound.x + Math.max(rect.x1, rect.x2), instance.dataTableBound.y + Math.max(rect.y1, rect.y2));
+                        for (i = 0; i < $cells.length; i++) {
+                            $cells[i].addClass('dhlt');
+                            $cells[i].addClass('hylyt');
+                        }
+
+                        return;
+                    }
                     var $targetTable = $(event.currentTarget);
                     var $target = $(event.target);
 
@@ -183,7 +324,7 @@
                 // all coordinates are considered relative to the document
                 function rectangleSelect($targetTable, selector, x1, y1, x2, y2) {
                     var x, y, w, h;
-                    console.log(x1, y1, x2, y2);
+                    var l1 = {x: x1, y: y1}, r1 = {x: x2, y: y2}, l2, r2;
 
                     var elements = [];
                     $targetTable.find(selector).each(function() {
@@ -193,14 +334,16 @@
                         y = offset.top;
                         w = $this.width();
                         h = $this.height();
+                        l2 = {x: x, y: y};
+                        r2 = {x: x + w, y: y + h};
 
-                        if (x >= x1
-                            && y >= y1
-                            && x + w <= x2
-                            && y + h <= y2) {
-                            // this element fits inside the selection rectangle
-                            elements.push($this);
+                        if (r2.x <= l1.x || r1.x <= l2.x
+                            || r2.y <= l1.y || r1.y <= l2.y) {
+                            return;
                         }
+
+                        // this element fits inside the selection rectangle
+                        elements.push($this);
                     });
                     return elements;
                 }
