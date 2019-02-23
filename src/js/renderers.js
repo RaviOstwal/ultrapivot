@@ -228,11 +228,18 @@
                     data = type.indexOf('data') >= 0;
 
                 collectChildren(h, header, total, data, res);
-                return res
+                return res;
+            };
+            this.getRowHeadersTree = function() {
+                return rowHeadersTree;
+            };
+            this.getColHeadersTree = function() {
+                return colHeadersTree;
             };
 
             var collectChildren = function (h, header, total, data, res) {
                 var i, l, key, dt, children;
+                if (!h) return;
                 children = h.children;
 
                 if (header) res.push($(h.th));
