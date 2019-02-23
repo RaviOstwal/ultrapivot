@@ -211,6 +211,13 @@
                 };
 
                 instance._mouseRelease = function (event) {
+                    var $targetTable = $(event.currentTarget);
+                    var $target = $(event.target);
+                    if ($targetTable.hasClass('axisTable')) {
+                        instance.clearHighlight();
+                        return;
+                    }
+
                     if (instance.dragRectBound) {
                         var i, rect = instance.dragRectBound, $cells;
                         $cells = rectangleSelect(instance.dataTable,'td',
@@ -223,14 +230,8 @@
 
                         return;
                     }
-                    var $targetTable = $(event.currentTarget);
-                    var $target = $(event.target);
 
-                    if ($targetTable.hasClass('axisTable')) {
-                        instance.clearHighlight();
-                        return;
-                    }
-                    else if (instance.options.enableRowSelection && $targetTable.hasClass('rowHeaderTable')) {
+                    if (instance.options.enableRowSelection && $targetTable.hasClass('rowHeaderTable')) {
                         if (instance.isShift && instance.lastSelectedRow) {
                             instance.highlightRowRange($target);
                         }
