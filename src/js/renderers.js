@@ -27,21 +27,15 @@
 
         // An interface to create additional extensions over the core features
         $.ultraPivotUtils.UltraPivotExtension = function () {
-            this.name = '';
-            this.events = '';
-            this.selector = '';
-            this.enabled = function (options, renderer) {};
-            this.onEvent = function (event) {};
-            this.disabled = function (error) {};
+            this.enabled = function (renderer) {};
         };
 
         $.ultraPivotUtils.extensions = {};
         $.ultraPivotUtils.registerExtension = function(extensionName, extension) {
             if (typeof extension === "function" && !$.ultraPivotUtils.extensions[extensionName]) {
                 var test = new extension();
-                if (test.enabled && test.onEvent && test.disabled) {
+                if (test.enabled) {
                     $.ultraPivotUtils.extensions[extensionName] = extension;
-                    console.log("Extension Registered : " + extensionName);
                 }
             }
         };
@@ -94,11 +88,10 @@
                     }
                 },
                 theme: 'ultra-default-light',
-                capabilities: [],
-                capabilityOptions: {}
+                capabilities: ['table-highlight']
             };
             var opts, colAttrs, rowAttrs, rowKeys, colKeys, tree, rowTotals, colTotals, rowCount, colCount, allTotal, arrowExpanded, arrowCollapsed,
-                capabilities, capabilityOptions, capabilityHandlers = {};
+                capabilities, rowHeadersTree, colHeadersTree;
 
             var classRowHide = "rowhide";
             var classRowShow = "rowshow";
@@ -113,6 +106,7 @@
             var classColExpanded = "colexpanded";
             var classColCollapsed = "colcollapsed";
             var sizesInitialized = false;
+            var activeExtensions = {};
 
             opts = $.extend(true, {}, defaults, options);
             if (opts.rowSubtotalDisplay.disableSubtotal) {
@@ -133,6 +127,16 @@
             if (typeof opts.colSubtotalDisplay.collapseAt !== 'undefined' && opts.collapseColsAt !== null) {
                 opts.colSubtotalDisplay.collapseAt = opts.collapseColsAt;
             }
+            var keyCount = function (obj) {
+                var c = 0;
+                for (var key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        c++;
+                    }
+                }
+                return c;
+            };
+
             colAttrs = pivotData.colAttrs;
             rowAttrs = pivotData.rowAttrs;
             rowKeys = pivotData.getRowKeys();
@@ -140,67 +144,36 @@
             tree = pivotData.tree;
             rowTotals = pivotData.rowTotals;
             colTotals = pivotData.colTotals;
-            rowCount = (function (obj) {
-                var c = 0;
-                for (var key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                        c++;
-                    }
-                }
-                return c;
-            })(rowTotals);
-            colCount = (function (obj) {
-                var c = 0;
-                for (var key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                        c++;
-                    }
-                }
-                return c;
-            })(colTotals);
+            rowCount = keyCount(rowTotals);
+            colCount = keyCount(colTotals);
             allTotal = pivotData.allTotal;
             arrowExpanded = opts.arrowExpanded;
             arrowCollapsed = opts.arrowCollapsed;
             capabilities = opts.capabilities;
-            capabilityOptions = opts.capabilityOptions;
+            rowHeadersTree = null;
+            colHeadersTree = null;
 
-            var enableCapability = function(extension) {
-                var extInstance = new extension();
-                var handler = function (e) {
-                    setTimeout(function () {
-                        try {
-                            extInstance.onEvent(e);
-                        }
-                        catch (error) {
-                            // Remove the extension in case it causes any problem and notify the extension for the same
-                            extInstance.disabled(error);
-                            disableCapability(extInstance);
-                        }
-                    }, 0);
-                };
-
-                capabilityHandlers[extInstance.name] = handler;
-                $(result).find(extInstance.selector).on(extInstance.events, handler);
-                // Notify the extension that it is added successfully
-                var capOptions = capabilityOptions[extInstance.name];
-                if (!capOptions) {
-                    capOptions = {};
-                    capabilityOptions[extInstance.name] = capOptions;
+            var enableCapability = function(capability) {
+                if (!activeExtensions[capability]) {
+                    var extension = $.ultraPivotUtils.extensions[capability];
+                    if (!extension) return;
+                    var extInstance = new extension();
+                    extInstance.enabled(instance);
+                    activeExtensions[capability] = extInstance;
                 }
-
-                extInstance.enabled(capOptions, instance);
             };
-
-            var disableCapability = function(extInstance) {
-                var handler = capabilityHandlers[extension.name];
-                $(result).find(extInstance.selector).off(extInstance.events, handler);
-                delete capabilityHandlers[extInstance.name];
+            this.getExtension = function (extensionName) {
+                return activeExtensions[extensionName];
             };
 
             this.getTableElement = function () {
                 return result ? result : main(rowAttrs, rowKeys, colAttrs, colKeys);
             };
+            this.getOptions = function () {
+                return opts;
+            };
 
+            /** Methods provide metadata*/
             this.getRowCount = function () {
                 return rowCount;
             };
@@ -228,16 +201,66 @@
             this.getGrandTotal = function () {
                 return allTotal;
             };
-            this.getRowChild = function (rHeader) {
-                return null; //todo
+            this.getRowNode = function (rHeader) {
+                var i, rh;
+                for (i = 0; i < rowHeadersTree.length; i++) {
+                    rh = rowHeadersTree[i];
+                    if (rHeader === rh.th) {
+                        return rh;
+                    }
+                }
+                return null;
             };
-            this.getColChild = function (cHeader) {
-                return null; //todo
+            this.getColNode = function (cHeader) {
+                var i, ch;
+                for (i = 0; i < colHeadersTree.length; i++) {
+                    ch = colHeadersTree[i];
+                    if (cHeader === ch.th) {
+                        return ch;
+                    }
+                }
+                return null;
             };
-            this.getDataChild = function (rHeader, cHeader) {
-                return null; //todo
+            this.getChildren = function(h, type) {
+                var res = [],
+                    header = type.indexOf('header') >= 0,
+                    total = type.indexOf('total') >= 0,
+                    data = type.indexOf('data') >= 0;
+
+                collectChildren(h, header, total, data, res);
+                return res
             };
 
+            var collectChildren = function (h, header, total, data, res) {
+                var i, l, key, dt, children;
+                children = h.children;
+
+                if (header) res.push($(h.th));
+                if (total) {
+                    if (h.sTh) res.push($(h.sTh));
+                    if (h.dsTr) res.push($(h.dsTr).find('td'));
+                    else res.push($(result).find('.dataTable').find('.col' + h.row + '.pvtColSubtotal'));
+                }
+
+                if (!children || children.length === 0) {
+                    if (data) {
+                        if (h.dtr) dt = $(h.dtr).find('td');
+                        else dt = $(result).find('.dataTable').find('.col' + h.row);
+
+                        if (!total) {
+                            dt = dt.not('.pvtColSubtotal').not('.pvtRowSubtotal').not('.rowTotal').not('.colTotal');
+                        }
+                        res.push(dt);
+                    }
+                }
+                else {
+                    l = children.length;
+                    for (i = 0; i < l; i++) {
+                        key = children[i];
+                        collectChildren(h[key], header, total, data, res);
+                    }
+                }
+            };
             var hasClass = function(element, className) {
                 var regExp;
                 regExp = new RegExp("(?:^|\\s)" + className + "(?!\\S)", "g");
@@ -1466,6 +1489,8 @@
                 result.setAttribute("data-numrows", rowKeys.length);
                 result.setAttribute("data-numcols", colKeys.length);
 
+                colHeadersTree = colAttrHeaders;
+                rowHeadersTree = rowAttrHeaders;
                 setTimeout(function () {
                     $(result).find('.ultraPivotContainer').css('display', 'flex');
                     initScrolls();
@@ -1499,9 +1524,7 @@
                 var rs = render(rowAttrs, rowKeys, colAttrs, colKeys);
                 for (var i in capabilities) {
                     if (capabilities.hasOwnProperty(i)) {
-                        var capability = capabilities[i];
-                        var extension = $.ultraPivotUtils.extensions[capability];
-                        if (extension) enableCapability(extension);
+                        enableCapability(capabilities[i]);
                     }
                 }
                 return rs;
