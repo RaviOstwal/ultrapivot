@@ -26,10 +26,7 @@
                 var defaultOpts = {
                     enableRowSelection: true,
                     enableColSelection: true,
-                    enableTotalSelection: false,
-                    selectedRows: [],
-                    selectedCols: [],
-                    selectedData: []
+                    enableTotalSelection: false
                 };
                 var instance = this;
                 instance.options = null;
@@ -99,6 +96,7 @@
                 };
 
                 instance.mouseMove = function (event) {
+                    var l, t, maxWidth, maxHeight;
                     if (!instance.dragStartPoint) return;
                     var rect;
                     if (!instance.dragRectBound) {
@@ -117,59 +115,73 @@
                     rect.x2 = event.clientX - instance.dataTableBound.x;
                     rect.y2 = event.clientY - instance.dataTableBound.y;
 
-                    instance.dragRect.css('left', Math.min(rect.x1, rect.x2));
-                    instance.dragRect.css('top', Math.min(rect.y1, rect.y2));
-                    instance.dragRect.css('width', Math.abs(rect.x2 - rect.x1));
-                    instance.dragRect.css('height', Math.abs(rect.y2 - rect.y1));
+                    l = Math.max(2,  Math.min(rect.x1, rect.x2));
+                    maxWidth = instance.dataTableBound.width - l - 2;
+                    t = Math.max(2, Math.min(rect.y1, rect.y2));
+                    maxHeight = instance.dataTableBound.height - t - 2;
+
+                    instance.dragRect.css('left', l);
+                    instance.dragRect.css('top', t);
+                    instance.dragRect.css('width', Math.min(Math.abs(rect.x2 - rect.x1), maxWidth));
+                    instance.dragRect.css('height', Math.min(Math.abs(rect.y2 - rect.y1), maxHeight));
                 };
 
                 instance.scroller = null;
                 instance.mouseOut = function (event) {
                     if (!instance.scrollView) return;
 
-                    var scrolled = instance.renderer.scroll();
-                    var viewBox = instance.scrollView, yScroll = '+= 0px', xScroll = '+= 0px', sx = 0, sy = 0;
-
-                    if (scrolled.x.ratio !== 1 && viewBox.x2 - event.clientX < 15) {
-                        xScroll = '+= 30px'; sx = 30;
-                    }
-                    else if (scrolled.x.ratio !== 1 && event.clientX - viewBox.x1 < 15) {
-                        xScroll = '-= 30px'; sx = -30;
-                    }
-                    if (scrolled.y.ratio !== 1 && viewBox.y2 - event.clientY < 15) {
-                        yScroll = '+= 30px'; sy = +30;
-                    }
-                    else if (scrolled.y.ratio !== 1 && event.clientY - viewBox.y1 < 15) {
-                        yScroll = '-= 30px'; sy = -30;
-                    }
-
-                    if (sx === 0 && sy === 0) {
-                        return;
-                    }
+                    var viewBox = instance.scrollView, yScroll = '+= 0px', xScroll = '+= 0px', sx = 0, sy = 0
 
                     instance.scroller = setInterval(function () {
+
+                        var scrolled = instance.renderer.scroll();
+                        var x = scrolled.x, y = scrolled.y;
+                        if (x.ratio !== 1 && x.max !== 0  && viewBox.x2 - event.clientX < 15) {
+                            sx = Math.min(30, x.max - x.position);
+                            xScroll = '+= ' + sx + 'px';
+                        }
+                        else if (x.ratio !== 0 && x.max !== 0  && event.clientX - viewBox.x1 < 15) {
+                            sx = Math.max(-30, 0 - x.position);
+                            xScroll = '-= ' + Math .abs(sx) + 'px';
+                        }
+                        if (y.ratio !== 1 && y.max !== 0  && viewBox.y2 - event.clientY < 15) {
+                            sy = Math.min(30, y.max - y.position);
+                            yScroll = '+= ' + sy + 'px';
+                        }
+                        else if (y.ratio !== 0 && y.max !== 0 && event.clientY - viewBox.y1 < 15) {
+                            sy = Math.max(-30, 0 - y.position);
+                            yScroll = '-= ' + Math .abs(sy) + 'px';
+                        }
+
+                        if (sx === 0 && sy === 0) {
+                            return;
+                        }
+
+                        var left, top, width, height, maxWidth, maxHeight;
                         if (scrolled.x.ratio !== 1 || scrolled.y.ratio !== 1) {
                             if (sx !== 0) {
-                                var left = instance.dragRect.offset().left;
-                                var width = instance.dragRect.width();
+                                left = instance.dragRect.offset().left;
+                                width = instance.dragRect.width();
                                 if (sx < 0) left += sx;
                                 width += Math.abs(sx);
 
-                                if ((left + width + 10) < instance.dataTableBound.right) {
-                                    instance.dragRect.css('left', left);
-                                    instance.dragRect.css('width', width);
-                                }
+                                left = Math.max(2,  left);
+                                maxWidth = instance.dataTableBound.width - left - 2;
+
+                                instance.dragRect.css('left', left);
+                                instance.dragRect.css('width', Math.min(width, maxWidth));
                             }
                             if (sy !== 0) {
-                                var top = instance.dragRect.offset().top;
-                                var height = instance.dragRect.height();
+                                top = instance.dragRect.offset().top;
+                                height = instance.dragRect.height();
                                 if (sy < 0) top += sy;
                                 height += Math.abs(sy);
 
-                                if ((top + height + 10) < instance.dataTableBound.bottom) {
-                                    instance.dragRect.css('top', top);
-                                    instance.dragRect.css('height', height);
-                                }
+                                top = Math.max(2, top);
+                                maxHeight = instance.dataTableBound.height - top - 2;
+
+                                instance.dragRect.css('top', top);
+                                instance.dragRect.css('height', Math.min(height, maxHeight));
                             }
                             instance.renderer.scroll({ x : xScroll, y : yScroll }, 40);
                         }
@@ -185,14 +197,16 @@
                         clearInterval(instance.scroller);
                         instance.scroller = null;
 
-                        var rect = instance.dragRectBound;
-                        rect.x2 = event.clientX - instance.dataTableBound.x;
-                        rect.y2 = event.clientY - instance.dataTableBound.y;
+                        if (instance.dragRectBound) {
+                            var rect = instance.dragRectBound;
+                            rect.x2 = event.clientX - instance.dataTableBound.x;
+                            rect.y2 = event.clientY - instance.dataTableBound.y;
 
-                        instance.dragRect.css('left', Math.min(rect.x1, rect.x2));
-                        instance.dragRect.css('top', Math.min(rect.y1, rect.y2));
-                        instance.dragRect.css('width', Math.abs(rect.x2 - rect.x1));
-                        instance.dragRect.css('height', Math.abs(rect.y2 - rect.y1));
+                            instance.dragRect.css('left', Math.min(rect.x1, rect.x2));
+                            instance.dragRect.css('top', Math.min(rect.y1, rect.y2));
+                            instance.dragRect.css('width', Math.abs(rect.x2 - rect.x1));
+                            instance.dragRect.css('height', Math.abs(rect.y2 - rect.y1));
+                        }
                     }
                 };
 
@@ -431,6 +445,127 @@
                         instance.container.removeClass('highlighted');
                     }
                 };
+
+                instance.setOptions = function(opts) {
+                    extend(instance.options, opts);
+                };
+
+                instance.getSelections = function() {
+                    var i, j, header, rowSelections = [], colSelections = [], dataSelections = [],
+                        rowHeaders = instance.renderer.getRowHeadersTree(),
+                        colHeaders = instance.renderer.getColHeadersTree(),
+                        leafRows = {}, leafCols = {};
+                    for (i = 0; i < rowHeaders.length; i++) {
+                        header = rowHeaders[i];
+                        if (header.col === 0) {
+                            collectSelections(header, rowSelections);
+                        }
+                        if (!header.children || header.children.length === 0) {
+                            leafRows[header.row] = header.key.join('<@>');
+                        }
+                    }
+
+                    for (i = 0; i < colHeaders.length; i++) {
+                        header = colHeaders[i];
+                        if (header.col === 0) {
+                            collectSelections(header, colSelections);
+                        }
+                        if (!header.children || header.children.length === 0) {
+                            leafCols[header.row] = header.key.join('<@>');
+                        }
+                    }
+
+                    var $selectedCells = $(instance.dataTable).find('.dhlt');
+                    if ($selectedCells.length > 0) {
+                        for (i in leafRows) {
+                            if (leafRows.hasOwnProperty(i)) {
+                                for (j in leafCols) {
+                                    if (leafCols.hasOwnProperty(j)) {
+                                        if ($selectedCells.filter('.row' + i + '.col' + j).length > 0) {
+                                            dataSelections.push(leafRows[i] + '<#>' + leafCols[j]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return {
+                        selectedRows: rowSelections,
+                        selectedCols: colSelections,
+                        selectedCells: dataSelections
+                    };
+                };
+
+                var collectSelections = function(header, selections) {
+                    var i, l, children = header.children, $th = $(header.th);
+                    if ($th.hasClass('rhlt') || $th.hasClass('chlt')) {
+                        selections.push(header.key.join('<@>'));
+                        return;
+                    }
+                    if (children) {
+                        l = children.length;
+                        for (i = 0; i < l; i++) {
+                            collectSelections(header[children[i]], selections);
+                        }
+                    }
+                };
+
+                instance.setSelections = function(selections) {
+                    instance.clearHighlight();
+
+                    var i, header, rKey, cKey, hasSelection = false,
+                        rowSelections = selections.selectedRows,
+                        colSelections = selections.selectedCols,
+                        dataSelections = selections.selectedCells,
+                        rowHeaders = instance.renderer.getRowHeadersTree(),
+                        colHeaders = instance.renderer.getColHeadersTree(),
+                        leafRows = {}, leafCols = {};
+
+                    for (i = 0; i < rowHeaders.length; i++) {
+                        header = rowHeaders[i];
+                        if (rowSelections.indexOf(header.key.join('<@>')) >= 0) {
+                            hasSelection = true;
+                            instance.highlightChildren(header, 'rhlt');
+                        }
+                        if (!header.children || header.children.length === 0) {
+                            leafRows[header.key.join('<@>')] = header.row;
+                        }
+                    }
+                    for (i = 0; i < colHeaders.length; i++) {
+                        header = colHeaders[i];
+                        if (colSelections.indexOf(header.key.join('<@>')) >= 0) {
+                            hasSelection = true;
+                            instance.highlightChildren(header, 'chlt');
+                        }
+                        if (!header.children || header.children.length === 0) {
+                            leafCols[header.key.join('<@>')] = header.row;
+                        }
+                    }
+
+                    var $allCells = $(instance.dataTable).find('.pvtVal')
+                                            .not('.rowTotal').not('.colTotal')
+                                            .not('.pvtRowSubtotal').not('.pvtColSubtotal');
+
+                    if ($allCells.length > 0) {
+                        for (rKey in leafRows) {
+                            if (leafRows.hasOwnProperty(rKey)) {
+                                for (cKey in leafCols) {
+                                    if (leafCols.hasOwnProperty(cKey)) {
+                                        if (dataSelections.indexOf(rKey + '<#>' + cKey) >= 0) {
+                                            hasSelection = true;
+                                            $allCells.filter('.row' + leafRows[rKey] + '.col' + leafCols[cKey]).addClass('dhlt').addClass('hylyt');
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (hasSelection) {
+                        instance.container.addClass('highlighted');
+                    }
+                }
             }
 
             $.ultraPivotUtils.registerExtension('table-highlight', UltraHighlighter);
