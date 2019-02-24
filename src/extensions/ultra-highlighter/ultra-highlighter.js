@@ -26,7 +26,6 @@
                 var defaultOpts = {
                     enableRowSelection: true,
                     enableColSelection: true,
-                    enableDataSelection: true,
                     enableTotalSelection: false,
                     selectedRows: [],
                     selectedCols: [],
@@ -54,9 +53,7 @@
                     if (instance.options.enableRowSelection || instance.options.enableColSelection) {
                         instance.selectionType += 'header ';
                     }
-                    if (instance.options.enableDataSelection) {
-                        instance.selectionType += 'data ';
-                    }
+                    instance.selectionType += 'data ';
                     if (instance.options.enableTotalSelection) {
                         instance.selectionType += 'total ';
                     }
@@ -228,6 +225,12 @@
                             $cells[i].addClass('hylyt');
                         }
 
+                        instance.container.addClass('highlighted');
+                        return;
+                    }
+
+                    if (!instance.options.enableTotalSelection
+                        && ($target.hasClass('rowTotal') || $target.hasClass('colTotal') || $target.hasClass('pvtRowSubtotal') || $target.hasClass('pvtColSubtotal'))) {
                         return;
                     }
 
@@ -253,7 +256,7 @@
                             instance.dimColChildren($target);
                         }
                     }
-                    else if (instance.options.enableDataSelection && $targetTable.hasClass('dataTable')) {
+                    else if ($targetTable.hasClass('dataTable')) {
                         if (instance.isShift && instance.lastSelectedCell) {
                             instance.highlightDataRange($targetTable, $target);
                         }
@@ -330,6 +333,10 @@
                     var elements = [];
                     $targetTable.find(selector).each(function() {
                         var $this = $(this);
+                        if (!instance.options.enableTotalSelection
+                            && ($this.hasClass('rowTotal') || $this.hasClass('colTotal') || $this.hasClass('pvtRowSubtotal') || $this.hasClass('pvtColSubtotal'))) {
+                            return;
+                        }
                         var offset = $this.offset();
                         x = offset.left;
                         y = offset.top;

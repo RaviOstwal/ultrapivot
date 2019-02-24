@@ -220,6 +220,7 @@
                 return null;
             };
             this.getChildren = function(h, type) {
+                type = type ? type : 'data header total';
                 var res = [],
                     header = type.indexOf('header') >= 0,
                     total = type.indexOf('total') >= 0,
