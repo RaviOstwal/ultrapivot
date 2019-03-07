@@ -160,15 +160,21 @@
                     activeExtensions[capability] = extInstance;
                 }
             };
+
+            // Post render interactions
             this.getExtension = function (extensionName) {
                 return activeExtensions[extensionName];
             };
-
             this.getTableElement = function () {
                 return result ? result : main(rowAttrs, rowKeys, colAttrs, colKeys);
             };
             this.getOptions = function () {
                 return opts;
+            };
+            this.setTheme = function (themeName) {
+                $(result).removeClass(opts.theme);
+                opts.theme = themeName;
+                $(result).addClass(opts.theme);
             };
 
             /** Methods provide metadata*/

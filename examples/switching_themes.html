@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Switching Theme</title>
+</head>
+<body>
+
+<!-- PivotTable.js libs from ../dist -->
+<link rel="stylesheet" type="text/css" href="../src/css/ultrapivot.css"/>
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-dark.css"/>
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-light.css"/>
+<link rel="stylesheet" type="text/css" href="../src/css/ultra-pivot-ultra-light.css"/>
+
+<script type="text/javascript" src="../libs/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../libs/js/jquery.overlayScrollbars.js"></script>
+<link rel="stylesheet" type="text/css" href="../libs/css/OverlayScrollbars.css">
+<link rel="stylesheet" type="text/css" href="../libs/css/os-theme-thin-dark.css">
+<link rel="stylesheet" type="text/css" href="../libs/css/os-theme-thin-light.css">
+
+<script src="../libs/js/pivot.js"></script>
+<script src="../src/js/aggregators.js"></script>
+<script src="../src/js/dataprocessor.js"></script>
+<script src="../src/js/renderers.js"></script>
+
+<p>Choose theme from the drop down below</p>
+<select id="themeSelect">
+    <option value="ultra-default-light">Default Theme</option>
+    <option value="ultra-pivot-dark">Dark Theme</option>
+    <option value="ultra-pivot-light">Light Theme</option>
+    <option value="ultra-pivot-ultra-light">Ultra Light Theme</option>
+</select>
+
+<div id="ultraPivotTable" style="margin-top: 30px"></div>
+
+<script type="text/javascript">
+    let utils = $.ultraPivotUtils;
+    let sum =  utils.aggregators["Sum"];
+    let dataClass = utils.UltraPivotData;
+    let renderer = utils.subtotal_renderers["Table With Subtotal"];
+
+    $.getJSON( "data/sample_data.json", function( data ) {
+        var ultraPivot = $("#ultraPivotTable").ultraPivot(
+            data,
+            {
+                rows: ["Sales Channel", "Order Priority", "Item Type"],
+                cols: ["Region", "Country"],
+                aggregator: sum(["Total Profit"]),
+                dataClass: dataClass,
+                renderer: renderer
+            }
+        );
+
+        $("#themeSelect").on("change", function(e) {
+            var theme = $(e.currentTarget).val();
+            ultraPivot.setTheme(theme);
+        });
+    });
+</script>
+
+</body>
+</html>
